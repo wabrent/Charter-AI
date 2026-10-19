@@ -51,7 +51,7 @@ nav{display:flex;align-items:center;gap:2rem;margin-left:1.5rem}
 .dd.open{display:block}
 .dd a{display:block;padding:.65rem 1rem;font-size:.95rem;color:var(--sub)}
 .dd a span{display:block;font-size:.78rem;color:var(--lab);margin-top:.2rem}
-.hd .btn{margin-left:auto}
+.hd-r{margin-left:auto;display:flex;gap:.75rem}
 
 .btn{display:inline-flex;align-items:center;gap:.75rem;height:3rem;padding:0 1.25rem;background:var(--red);color:#fff;
   font:500 1.05rem/1 var(--SG);letter-spacing:-.02em;white-space:nowrap;transition:background .2s}
@@ -181,6 +181,23 @@ h1 em{font-style:normal;color:var(--red)}
 .cta h2{margin:1rem auto 0;font:700 clamp(2rem,1.4rem + 2.4vw,3.4rem)/1.05 var(--SG);letter-spacing:-.035em;max-width:44rem}
 .cta .ctas{justify-content:center}
 
+/* token */
+.btn.trade{background:transparent;border:1px solid var(--red);color:#fff}
+.token{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2rem 3rem;align-items:end}
+.tk-sym{margin-top:1rem;font:700 clamp(2.4rem,1.6rem + 2.6vw,4rem)/1 var(--SG);letter-spacing:-.04em}
+.tk-sym span{color:var(--red)}
+.ca{display:flex;align-items:stretch;margin-top:1.75rem;border:1px solid var(--line2);max-width:44rem;background:rgba(8,8,8,.8)}
+.ca .lb{display:flex;align-items:center;padding:0 1rem;border-right:1px solid var(--line);font-size:.75rem;letter-spacing:.16em;color:var(--lab)}
+.ca code{flex:1;min-width:0;display:flex;align-items:center;padding:1rem;font:500 clamp(.78rem,.7rem + .3vw,1rem)/1.3 var(--JB);color:#fff;word-break:break-all}
+.ca button{flex:none;padding:0 1.25rem;border-left:1px solid var(--line);font-size:.85rem;color:var(--sub);transition:background .2s,color .2s}
+.ca button.ok{color:var(--ok)}
+.tk-links{display:flex;flex-wrap:wrap;gap:1rem 1.5rem;margin-top:1rem;font-size:.85rem;color:var(--lab)}
+.tk-links a{border-bottom:1px solid var(--line2)}
+.tk-cta{display:flex;flex-direction:column;gap:.75rem;align-items:stretch}
+.tk-cta .btn{height:3.5rem;font-size:1.15rem;justify-content:space-between;min-width:15rem}
+.ft-ca{word-break:break-all}
+@media (hover:hover){.ca button:hover{background:rgba(255,255,255,.06);color:#fff}.tk-links a:hover{color:#fff}.btn.trade:hover{background:var(--red)}}
+@media (max-width:699px){.token{grid-template-columns:minmax(0,1fr)}.ca{flex-wrap:wrap}.ca .lb{padding:.6rem 1rem;border-right:0;border-bottom:1px solid var(--line);width:100%}.ca button{width:100%;padding:.8rem;border-left:0;border-top:1px solid var(--line)}}
 footer{border-top:1px solid var(--line);padding:1.75rem 0 calc(1.75rem + env(safe-area-inset-bottom,0px))}
 @media (max-width:1023px){.rec{grid-template-columns:minmax(0,1fr)}.feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:699px){.feats{grid-template-columns:minmax(0,1fr)}.facts li{grid-template-columns:minmax(0,1fr);gap:.2rem}.code pre{font-size:.75rem;min-height:0}}
@@ -197,7 +214,7 @@ footer{border-top:1px solid var(--line);padding:1.75rem 0 calc(1.75rem + env(saf
   .msub a:hover{color:#fff}
 }
 @media (max-width:1023px){
-  nav,.hd>.btn{display:none}
+  nav,.hd-r{display:none}
   .burger{display:block}
   .hero{grid-template-columns:minmax(0,1fr)}
 }
@@ -301,7 +318,7 @@ h1 em::after{content:'';position:absolute;left:0;right:0;bottom:.02em;height:.07
         </div></div>
       <a class="nl" href="app.html#registry">App</a>
     </nav>
-    <a class="btn" href="app.html#register">Launch app<svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></a>
+    <div class="hd-r"><a class="btn trade" href="https://ponsfamily.com/launchpad/0x7aed839a00c8f6ac18fabc45af97f3e9f8239c5a" target="_blank" rel="noopener">Trade $CHARTER</a><a class="btn" href="app.html#register">Launch app<svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></a></div>
     <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
   </div>
   <div class="menu" id="menu">
@@ -323,6 +340,7 @@ h1 em::after{content:'';position:absolute;left:0;right:0;bottom:.02em;height:.07
         <li><a class="mrow" href="app.html#registry">App</a></li>
       </ul>
       <a class="btn" href="app.html#register">Register agent<svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></a>
+      <a class="btn trade" href="https://ponsfamily.com/launchpad/0x7aed839a00c8f6ac18fabc45af97f3e9f8239c5a" target="_blank" rel="noopener">Trade $CHARTER<svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></a>
     </div>
   </div>
 </header>
@@ -354,6 +372,21 @@ h1 em::after{content:'';position:absolute;left:0;right:0;bottom:.02em;height:.07
   <div class="ticker" aria-label="Recently registered agents"><div class="track" id="track">
     <span><b>ERC-8004</b> Trustless Agents standard</span><span><b>Robinhood Chain</b> chain ID 4663</span><span><b>0x8004…a432</b> Identity Registry</span><span><b>Web · MCP · A2A</b> service endpoints</span><span><b>x402</b> payments flag</span><span><b>ERC-721</b> agent ownership</span>
   </div></div>
+
+  <section class="sec" id="token">
+    <div class="wrap token">
+      <div>
+        <div class="eyebrow reveal">Token · Robinhood Chain</div>
+        <div class="tk-sym reveal" style="--i:1">$<span>CHARTER</span></div>
+        <div class="ca reveal" style="--i:2"><span class="lb">CA</span><code id="caAddr">0x7aed839a00c8f6ac18fabc45af97f3e9f8239c5a</code><button type="button" id="caCopy">Copy</button></div>
+        <div class="tk-links reveal" style="--i:3"><a href="https://robinhoodchain.blockscout.com/token/0x7aed839a00c8f6ac18fabc45af97f3e9f8239c5a" target="_blank" rel="noopener">View on Blockscout</a><span>CharterAI · 18 decimals</span><span>Always check the address before you buy</span></div>
+      </div>
+      <div class="tk-cta reveal" style="--i:2">
+        <a class="btn" href="https://ponsfamily.com/launchpad/0x7aed839a00c8f6ac18fabc45af97f3e9f8239c5a" target="_blank" rel="noopener">Trade $CHARTER<svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></a>
+        <a class="btn ghost" href="https://robinhoodchain.blockscout.com/token/0x7aed839a00c8f6ac18fabc45af97f3e9f8239c5a" target="_blank" rel="noopener">Contract on Blockscout</a>
+      </div>
+    </div>
+  </section>
 
   <section class="sec">
     <div class="wrap rec">
@@ -433,6 +466,7 @@ h1 em::after{content:'';position:absolute;left:0;right:0;bottom:.02em;height:.07
   <div class="wrap ft">
     <span>Charter AI · independent interface to ERC-8004 on Robinhood Chain (ID 4663). Experimental software, use at your own risk.</span>
     <a href="https://robinhoodchain.blockscout.com/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener">Registry 0x8004…a432</a>
+    <a class="ft-ca" href="https://robinhoodchain.blockscout.com/token/0x7aed839a00c8f6ac18fabc45af97f3e9f8239c5a" target="_blank" rel="noopener">$CHARTER CA 0x7aed839a00c8f6ac18fabc45af97f3e9f8239c5a</a>
   </div>
 </footer>
 
@@ -469,6 +503,13 @@ h1 em::after{content:'';position:absolute;left:0;right:0;bottom:.02em;height:.07
       if(ti<JSON_TOK.length)setTimeout(step,16)})();
   }
   if('IntersectionObserver' in window){var jo=new IntersectionObserver(function(es){if(es[0].isIntersecting){jo.disconnect();typeJSON()}},{threshold:.3});jo.observe(pre)}else typeJSON();
+
+  /* ---------- copy contract address ---------- */
+  var cb=document.getElementById('caCopy');
+  cb.addEventListener('click',function(){var a=document.getElementById('caAddr').textContent.trim();
+    function ok(){cb.textContent='Copied';cb.classList.add('ok');setTimeout(function(){cb.textContent='Copy';cb.classList.remove('ok')},1400)}
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(a).then(ok,function(){fallback()});else fallback();
+    function fallback(){var r=document.createRange();r.selectNodeContents(document.getElementById('caAddr'));var sel=getSelection();sel.removeAllRanges();sel.addRange(r);try{document.execCommand('copy');ok()}catch(e){}}});
 
   /* ---------- faq ---------- */
   [].slice.call(document.querySelectorAll('.qa button')).forEach(function(b){b.addEventListener('click',function(){

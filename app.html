@@ -51,6 +51,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .btn svg{width:18px;height:15px;flex:none;transition:transform .25s cubic-bezier(.22,1,.36,1)}
 .btn.ghost{background:transparent;border:1px solid var(--line2)}
 .btn.sm{height:38px;font-size:14.5px;padding:0 14px}
+.btn.trade{background:transparent;border:1px solid var(--red)}
+.ft-ca{word-break:break-all}
+@media (hover:hover){.btn.trade:hover{background:var(--red)}}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 @media (hover:hover){.btn:not([disabled]):hover{background:var(--red-d)}.btn:not([disabled]):hover svg{transform:translateX(3px)}
   .btn.ghost:not([disabled]):hover{background:rgba(255,255,255,.06)} .tab:hover{color:#fff}}
@@ -194,6 +197,7 @@ footer{border-top:1px solid var(--line);padding-block:28px 40px;font-size:12.5px
 footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 footer a{color:var(--sub)}
 @media (max-width:640px){.tabs .tab:nth-child(3){display:none}.net span{display:none}.top .wrap{gap:14px}.brand span{display:none}}
+@media (max-width:520px){.net{display:none}.top .wrap{gap:10px}.top .right{gap:8px}.tab{padding:8px 6px;font-size:13px}.btn.sm{padding:0 10px;font-size:13.5px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -214,6 +218,7 @@ footer a{color:var(--sub)}
     </nav>
     <div class="right">
       <div class="net" id="net" title="Robinhood Chain"><b></b><span id="netTxt">Robinhood Chain</span></div>
+      <a class="btn sm trade" href="https://ponsfamily.com/launchpad/0x7aed839a00c8f6ac18fabc45af97f3e9f8239c5a" target="_blank" rel="noopener">Trade</a>
       <button class="btn sm" id="connectBtn" type="button">Connect wallet</button>
     </div>
   </div>
@@ -340,6 +345,7 @@ footer a{color:var(--sub)}
 <footer><div class="wrap">
   <span>Charter AI · independent interface to the ERC-8004 Identity Registry on Robinhood Chain (ID 4663). Experimental software, use at your own risk.</span>
   <span><a href="https://eips.ethereum.org/EIPS/eip-8004" target="_blank" rel="noopener">ERC-8004</a> · <a href="https://robinhoodchain.blockscout.com/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener">Registry on Blockscout</a></span>
+  <span class="ft-ca">$CHARTER CA <a href="https://robinhoodchain.blockscout.com/token/0x7aed839a00c8f6ac18fabc45af97f3e9f8239c5a" target="_blank" rel="noopener">0x7aed839a00c8f6ac18fabc45af97f3e9f8239c5a</a> · <a href="https://ponsfamily.com/launchpad/0x7aed839a00c8f6ac18fabc45af97f3e9f8239c5a" target="_blank" rel="noopener">Trade</a></span>
 </div></footer>
 
 <script>
@@ -440,7 +446,10 @@ function copyText(t,btn){var done=function(){if(btn){var o=btn.textContent;btn.t
 /* ================= wallet ================= */
 var account=null;
 function eth(){return window.ethereum||null}
-function updateConnect(){var b=$('connectBtn');b.textContent=account?short(account):'Connect wallet';b.classList.toggle('ghost',!!account);syncSubmit()}
+var narrow=matchMedia('(max-width:520px)');
+if(narrow.addEventListener)narrow.addEventListener('change',function(){updateConnect()});
+if(narrow.matches)$('connectBtn').textContent='Connect';
+function updateConnect(){var b=$('connectBtn');b.textContent=account?(narrow.matches?account.slice(0,4)+'…'+account.slice(-3):short(account)):(narrow.matches?'Connect':'Connect wallet');b.classList.toggle('ghost',!!account);syncSubmit()}
 function connect(){var p=eth();if(!p)return Promise.reject(new Error('No wallet found. Install MetaMask or Rabby, then reload this page.'));
   return p.request({method:'eth_requestAccounts'}).then(function(a){account=a&&a[0]?a[0].toLowerCase():null;updateConnect();return account})}
 function ensureChain(){var p=eth();return p.request({method:'eth_chainId'}).then(function(c){if(parseInt(c,16)===CHAIN_ID)return;
