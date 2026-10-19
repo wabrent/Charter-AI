@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Charter AI promo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=block">
+<style>
+/* 1920x1080 stage. Every visual is set from window.renderAt(t); there are no CSS animations,
+   so a frame for any time t is reproducible. Open with ?play to preview in real time. */
+:root{--red:#c81b1c;--ink:#fff;--sub:#d9d9d9;--lab:#8f8f8f;--line:rgba(255,255,255,.14);--line2:rgba(255,255,255,.26);
+  --SG:'Space Grotesk',Arial,sans-serif;--JB:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#000;color:var(--ink);font-family:var(--JB);-webkit-font-smoothing:antialiased}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:#000}
+canvas{position:absolute;inset:0}
+.layer{position:absolute;inset:0;opacity:0}
+.c{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.1em;margin-bottom:-.1em}
+.w>span{display:inline-block}
+.eyebrow{font:400 22px/1 var(--JB);letter-spacing:.24em;text-transform:uppercase;color:var(--lab)}
+.red{color:var(--red)}
+#grid{position:absolute;inset:-64px;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,#000,transparent 75%);opacity:.3}
+#glow{position:absolute;inset:0;background:radial-gradient(ellipse 40% 50% at 50% 50%,rgba(200,27,28,.18),transparent 70%)}
+#scan{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(200,27,28,.9) 50%,transparent);box-shadow:0 0 24px 3px rgba(200,27,28,.35)}
+
+/* S1 logo */
+#logo svg{width:220px;height:220px}
+#logo svg path{stroke-dasharray:40;stroke-dashoffset:40}
+#word{margin-top:48px;font:700 96px/1 var(--SG);letter-spacing:-.04em}
+
+/* big type */
+.big{font:700 112px/1.04 var(--SG);letter-spacing:-.04em}
+.mid{font:700 84px/1.06 var(--SG);letter-spacing:-.035em}
+.left{position:absolute;left:150px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center}
+.ul{position:relative;display:inline-block}
+.ul i{position:absolute;left:0;right:0;bottom:.02em;height:.07em;background:var(--red);transform-origin:left}
+
+/* S4 steps */
+#s4 h2{position:absolute;left:150px;top:150px}
+.cards{position:absolute;left:150px;right:150px;top:400px;display:grid;grid-template-columns:repeat(3,1fr);gap:36px}
+.card{border:1px solid var(--line2);background:rgba(8,8,8,.9);padding:44px 40px;height:420px;position:relative;overflow:hidden}
+.card .n{font:500 24px/1 var(--JB);color:var(--red)}
+.card h3{margin-top:24px;font:500 46px/1.1 var(--SG);letter-spacing:-.02em}
+.card .body{margin-top:40px;font:400 26px/1.5 var(--JB);color:var(--sub)}
+.card .bar{position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--red)}
+.field{border:1px solid var(--line2);height:72px;display:flex;align-items:center;padding:0 22px;font:400 28px/1 var(--JB);color:#fff}
+.caret{display:inline-block;width:14px;height:32px;background:var(--red);margin-left:4px}
+.pill{display:inline-flex;align-items:center;gap:14px;border:1px solid var(--line2);padding:18px 22px;font:400 26px/1 var(--JB)}
+.dot{width:14px;height:14px;background:#3fae63}
+.mint{font:500 56px/1 var(--JB);color:#fff}
+.ring{position:absolute;border:2px solid var(--red)}
+
+/* S5 registry */
+#count{font:500 200px/1 var(--JB);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+#count .sq{display:inline-block;width:28px;height:28px;background:var(--red);vertical-align:middle;margin-right:30px}
+.feed{position:absolute;right:150px;top:150px;bottom:150px;width:760px;border:1px solid var(--line2);background:rgba(8,8,8,.88);overflow:hidden}
+.feed-hd{height:88px;display:flex;align-items:center;padding:0 36px;border-bottom:1px solid var(--line);font:500 22px/1 var(--JB);letter-spacing:.16em}
+.feed-hd i{width:14px;height:14px;background:var(--red);margin-right:18px}
+.clip{position:absolute;left:0;right:0;top:88px;bottom:0;overflow:hidden}
+.rows{position:absolute;left:0;right:0;top:0}
+.row{height:118px;display:flex;align-items:center;gap:28px;padding:0 36px;border-bottom:1px solid var(--line)}
+.row .id{font:400 22px/1 var(--JB);color:var(--lab);width:100px}
+.av{width:62px;height:62px;border:1px solid var(--line2);display:grid;place-items:center;font:700 28px/1 var(--SG);flex:none}
+.row b{display:block;font:500 32px/1.1 var(--SG)}
+.row span.d{display:block;margin-top:8px;font:400 20px/1.2 var(--JB);color:var(--lab);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:470px}
+
+/* S6 cta */
+.btn{display:inline-flex;align-items:center;gap:22px;height:96px;padding:0 40px;background:var(--red);font:500 38px/1 var(--SG);letter-spacing:-.02em;position:relative;overflow:hidden}
+.btn svg{width:34px;height:28px}
+.btn .sh{position:absolute;top:0;bottom:0;width:30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg)}
+.meta{margin-top:44px;font:400 26px/1 var(--JB);color:var(--sub);letter-spacing:.04em}
+#fade{position:absolute;inset:0;background:#000;opacity:0}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="glow"></div>
+  <div id="grid"></div>
+  <canvas id="net" width="1920" height="1080"></canvas>
+  <div id="scan"></div>
+
+  <!-- S1 -->
+  <div class="layer c" id="s1">
+    <div id="logo"><svg viewBox="0 0 46 46" fill="none" stroke="#fff" stroke-width="3">
+      <g><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+      <g transform="rotate(90 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+      <g transform="rotate(180 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+      <g transform="rotate(270 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g></svg></div>
+    <div id="word">Charter<span class="red">.</span>AI</div>
+  </div>
+
+  <!-- S2 -->
+  <div class="layer" id="s2"><div class="left">
+    <div class="mid" id="s2a"><span class="w"><span>AI agents now</span></span><br><span class="w"><span>trade, research and pay.</span></span></div>
+    <div class="mid red" id="s2b" style="margin-top:56px"><span class="w"><span>Who are they?</span></span><br><span class="w"><span>Who owns them?</span></span></div>
+  </div></div>
+
+  <!-- S3 -->
+  <div class="layer" id="s3"><div class="left">
+    <div class="eyebrow">ERC-8004 · Robinhood Chain</div>
+    <div class="big" style="margin-top:44px"><span class="w"><span>Identity built into</span></span><br><span class="w"><span>every</span></span> <span class="ul"><span class="w"><span class="red">AI agent</span></span><i id="ul"></i></span></div>
+    <div style="margin-top:48px;font:400 32px/1.5 var(--JB);color:var(--sub)" id="s3sub">On chain. Verifiable by any app. Owned by you.</div>
+  </div></div>
+
+  <!-- S4 -->
+  <div class="layer" id="s4">
+    <h2 class="mid">Three steps. One transaction.</h2>
+    <div class="cards">
+      <div class="card" id="c1"><div class="bar"></div><div class="n">01</div><h3>Describe the agent</h3><div class="body"><div class="field" id="typed"></div><div style="margin-top:22px;font-size:22px;color:var(--lab)">web · MCP · A2A endpoints</div></div></div>
+      <div class="card" id="c2"><div class="bar"></div><div class="n">02</div><h3>Connect a wallet</h3><div class="body"><div class="pill" id="pill"><span class="dot"></span>0x1f9a…3c21 connected</div><div style="margin-top:22px;font-size:22px;color:var(--lab)">Your wallet becomes the owner</div></div></div>
+      <div class="card" id="c3"><div class="bar"></div><div class="n">03</div><h3>Mint the identity</h3><div class="body"><div class="mint" id="mint">Agent #8853</div><div style="margin-top:22px;font-size:22px;color:var(--lab)">Written to the ERC-8004 registry</div><div class="ring" id="ring"></div></div></div>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="layer" id="s5">
+    <div class="left" style="right:auto">
+      <div class="eyebrow">Live on Robinhood Chain</div>
+      <div id="count" style="margin-top:36px"><span class="sq"></span><span id="countN">0</span></div>
+      <div style="margin-top:28px;font:400 34px/1.4 var(--SG);color:var(--sub)">agents already have<br>an on-chain identity</div>
+    </div>
+    <div class="feed"><div class="feed-hd"><i></i>LATEST ON CHAIN</div><div class="clip"><div class="rows" id="rows"></div></div></div>
+  </div>
+
+  <!-- S6 -->
+  <div class="layer c" id="s6">
+    <div id="logo2"><svg viewBox="0 0 46 46" fill="none" stroke="#fff" stroke-width="3" style="width:110px;height:110px">
+      <g><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+      <g transform="rotate(90 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+      <g transform="rotate(180 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+      <g transform="rotate(270 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g></svg></div>
+    <div class="big" style="margin-top:56px;font-size:96px" id="s6t">Register your agent<br>in under a minute</div>
+    <div style="margin-top:64px" id="s6b"><span class="btn">Launch Charter AI<svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg><span class="sh" id="sh"></span></span></div>
+    <div class="meta" id="s6m">No code · No platform fee · Owned by your wallet</div>
+  </div>
+
+  <div id="fade"></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var DURATION=32;
+function $(id){return document.getElementById(id)}
+function cl(x){return x<0?0:x>1?1:x}
+function seg(t,a,b){return cl((t-a)/(b-a))}
+function eo(x){return 1-Math.pow(1-x,4)}            // ease out quart
+function eio(x){return x<.5?8*x*x*x*x:1-Math.pow(-2*x+2,4)/2}
+function lerp(a,b,x){return a+(b-a)*x}
+function inout(t,a,b,c,d){return Math.min(eo(seg(t,a,b)),1-eio(seg(t,c,d)))} // fade in a..b, out c..d
+
+/* deterministic random */
+var sd=7;function rnd(){sd=(sd*16807)%2147483647;return (sd-1)/2147483646}
+
+/* ---------- network sphere ---------- */
+var cv=$('net'),cx=cv.getContext('2d'),W=1920,H=1080,pts=[],pairs=[],dust=[];
+(function seed(){var n=200,i;
+  for(i=0;i<n;i++){var u=rnd()*2-1,v=rnd()*Math.PI*2,r=i<150?1:.35+rnd()*.5,s=Math.sqrt(1-u*u);
+    pts.push({x:s*Math.cos(v)*r,y:u*r,z:s*Math.sin(v)*r,hot:rnd()<.07,ph:rnd()*6.28,sx:rnd()*W,sy:rnd()*H,dl:rnd()*.6})}
+  for(i=0;i<n;i++)for(var j=i+1;j<n;j++){var a=pts[i],b=pts[j],d=(a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z);if(d<.075)pairs.push([i,j])}
+  for(i=0;i<90;i++)dust.push({x:rnd(),y:rnd(),s:.6+rnd()*1.8,v:.006+rnd()*.018})})();
+/* camera keyframes: time, cx, cy, R (in H), alpha */
+var CAM=[[0,.5,.5,.30,1],[4.2,.5,.5,.32,1],[5.4,.76,.5,.36,.9],[9.4,.76,.5,.36,.9],[10.4,.8,.42,.42,.7],[13.9,.8,.42,.42,.7],[14.9,.5,.6,.62,.22],[21.8,.5,.6,.62,.22],[22.8,.28,.5,.38,.55],[27.4,.28,.5,.38,.55],[28.6,.5,.5,.46,.55],[32,.5,.5,.5,.4]];
+function cam(t){for(var i=0;i<CAM.length-1;i++){var a=CAM[i],b=CAM[i+1];if(t<=b[0]){var x=eio(seg(t,a[0],b[0]));return [lerp(a[1],b[1],x),lerp(a[2],b[2],x),lerp(a[3],b[3],x),lerp(a[4],b[4],x)]}}var l=CAM[CAM.length-1];return [l[1],l[2],l[3],l[4]]}
+function drawNet(t){
+  cx.clearRect(0,0,W,H);
+  dust.forEach(function(d){var y=((d.y-t*d.v)%1+1)%1;cx.fillStyle='rgba(255,255,255,'+(.06+d.s*.07).toFixed(3)+')';cx.fillRect(d.x*W,y*H,d.s,d.s)});
+  var c=cam(t),ocx=c[0]*W,ocy=c[1]*H,R=c[2]*H,al=c[3];
+  var ay=t*.16,ax=.38+Math.sin(t*.2)*.1,ca=Math.cos(ay),sa=Math.sin(ay),cb=Math.cos(ax),sb=Math.sin(ax);
+  var P=pts.map(function(p){var x=p.x*ca-p.z*sa,z=p.x*sa+p.z*ca,y=p.y*cb-z*sb;z=p.y*sb+z*cb;var k=2.6/(2.6+z);
+    var a=eo(seg(t,p.dl,p.dl+2.2));return{x:lerp(p.sx,ocx+x*R*k,a),y:lerp(p.sy,ocy+y*R*k,a),z:z,k:k,a:a}});
+  cx.lineWidth=1.4;
+  var la=al*eo(seg(t,1.2,3));
+  pairs.forEach(function(q){var a=P[q[0]],b=P[q[1]],v=(.05+.16*(1-(a.z+b.z+2)/4))*la;if(v<.004)return;cx.strokeStyle='rgba(255,255,255,'+v.toFixed(3)+')';cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.stroke()});
+  cx.lineWidth=2.2;
+  for(var e=0;e<9;e++){var q=pairs[(Math.floor(t*.8)*11+e*37)%pairs.length],a=P[q[0]],b=P[q[1]],f=(t*.8)%1;
+    cx.strokeStyle='rgba(200,27,28,'+(.85*(1-f)*la).toFixed(3)+')';cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(a.x+(b.x-a.x)*f,a.y+(b.y-a.y)*f);cx.stroke()}
+  P.forEach(function(p,i){var o=pts[i],front=1-(p.z+1)/2,A=al*Math.max(.25,p.a);
+    if(o.hot){var pu=.5+.5*Math.sin(t*2.4+o.ph),s=5*p.k;cx.fillStyle='rgba(200,27,28,'+((.55+.45*pu)*A).toFixed(3)+')';cx.fillRect(p.x-s/2,p.y-s/2,s,s);
+      var rr=s+16*pu;cx.lineWidth=1.4;cx.strokeStyle='rgba(200,27,28,'+(.4*(1-pu)*A).toFixed(3)+')';cx.strokeRect(p.x-rr/2,p.y-rr/2,rr,rr)}
+    else{var s2=2.4*p.k;cx.fillStyle='rgba(255,255,255,'+((.18+.55*front)*A).toFixed(3)+')';cx.fillRect(p.x-s2/2,p.y-s2/2,s2,s2)}});
+}
+
+/* ---------- helpers for text ---------- */
+function show(el,o,y){el.style.opacity=o;el.style.transform=y?'translateY('+y+'px)':'none'}
+function words(root,t,start,step){[].slice.call(root.querySelectorAll('.w>span')).forEach(function(s,i){var x=eo(seg(t,start+i*step,start+i*step+.8));s.style.transform='translateY('+((1-x)*110)+'%)'})}
+var logoPaths=[].slice.call(document.querySelectorAll('#logo path')), logo2Paths=[].slice.call(document.querySelectorAll('#logo2 path'));
+
+/* registry rows (real names read from the registry on 2026-10-19) */
+var AGENTS=[[8852,'Tokyo Futuro','Agentic GameFi on Robinhood Chain'],[8851,'moss','Checks any token before you hold it'],[8850,'hazel','Finds the biggest moves on the stock tape'],
+  [8849,'rowan','Keeps the calendar of due dates'],[8845,'gage','Fixed-cost loans on Robinhood Chain'],[8843,'Vantor Paymaster','Checks x402 v2 payments, read-only'],
+  [8838,'sorrel','Writes credit memos about other agents'],[8837,'alder','Reads smart contracts and says what they do']];
+var rowsEl=$('rows');
+AGENTS.concat(AGENTS).forEach(function(a){var r=document.createElement('div');r.className='row';
+  r.innerHTML='<span class="id">#'+a[0]+'</span><div class="av">'+a[1].charAt(0).toUpperCase()+'</div><div><b></b><span class="d"></span></div>';
+  r.querySelector('b').textContent=a[1];r.querySelector('.d').textContent=a[2];rowsEl.appendChild(r)});
+
+var NAME='Atlas Research';
+
+window.renderAt=function(t){
+  drawNet(t);
+  $('glow').style.opacity=.6+.4*Math.sin(t*.6);
+  $('grid').style.transform='translate('+((t*12)%64)+'px,'+((t*12)%64)+'px)';
+  var sc=(t%6)/6;$('scan').style.top=(sc*1180-50)+'px';$('scan').style.opacity=Math.sin(sc*Math.PI);
+
+  /* S1: 0 - 4.5 */
+  var o1=inout(t,.2,.8,3.7,4.4);show($('s1'),o1,-30*eio(seg(t,3.7,4.4)));
+  logoPaths.forEach(function(p,i){p.style.strokeDashoffset=40*(1-eo(seg(t,.4+i*.12,1.6+i*.12)))});
+  var w1=eo(seg(t,1.6,2.4));$('word').style.opacity=w1;$('word').style.transform='translateY('+(1-w1)*24+'px)';
+
+  /* S2: 4.5 - 9.5 */
+  var o2=inout(t,4.5,4.7,9,9.5);show($('s2'),o2,-30*eio(seg(t,9,9.5)));
+  words($('s2a'),t,4.6,.18);words($('s2b'),t,6.4,.22);
+
+  /* S3: 9.5 - 14 */
+  var o3=inout(t,9.5,9.7,13.5,14);show($('s3'),o3,-30*eio(seg(t,13.5,14)));
+  words($('s3'),t,9.7,.12);$('ul').style.transform='scaleX('+eo(seg(t,10.9,11.7))+')';
+  var s3s=eo(seg(t,11.3,12.1));$('s3sub').style.opacity=s3s;$('s3sub').style.transform='translateY('+(1-s3s)*20+'px)';
+
+  /* S4: 14 - 22 */
+  var o4=inout(t,14,14.3,21.5,22);show($('s4'),o4);
+  var h=eo(seg(t,14.1,14.8));$('s4').querySelector('h2').style.transform='translateY('+(1-h)*30+'px)';$('s4').querySelector('h2').style.opacity=h;
+  ['c1','c2','c3'].forEach(function(id,i){var c=$(id),x=eo(seg(t,14.4+i*.2,15.2+i*.2));c.style.opacity=x;c.style.transform='translateY('+(1-x)*60+'px)';
+    var act=[[15.2,17.2],[17.2,19.2],[19.2,21.6]][i],on=t>=act[0]&&t<act[1]+(i===2?1:0);
+    c.style.borderColor=on?'rgba(200,27,28,.9)':'rgba(255,255,255,.26)';c.querySelector('.bar').style.opacity=on?1:0});
+  var nch=Math.floor(NAME.length*seg(t,15.4,16.8));$('typed').innerHTML='';$('typed').appendChild(document.createTextNode(NAME.slice(0,nch)));
+  if(t>15.2&&t<17.4&&Math.floor(t*2.5)%2===0){var cr=document.createElement('span');cr.className='caret';$('typed').appendChild(cr)}
+  var pl=eo(seg(t,17.6,18.2));$('pill').style.opacity=pl;$('pill').style.transform='scale('+(.9+.1*pl)+')';
+  var mn=eo(seg(t,19.6,20.2));$('mint').style.opacity=mn;$('mint').style.transform='translateY('+(1-mn)*20+'px)';
+  var rp=seg(t,20,21.4),ring=$('ring');ring.style.left=(-10-rp*60)+'px';ring.style.top=(-14-rp*40)+'px';ring.style.width=(330+rp*120)+'px';ring.style.height=(80+rp*80)+'px';ring.style.opacity=t>20&&t<21.4?(1-rp):0;
+
+  /* S5: 22 - 27.5 */
+  var o5=inout(t,22,22.3,27,27.5);show($('s5'),o5);
+  var cn=Math.round(8853*eo(seg(t,22.3,24.4)));$('countN').textContent=cn.toLocaleString('en-US');
+  var rows=seg(t,22.3,27.5);rowsEl.style.transform='translateY('+(-rows*118*4.2)+'px)';
+  var fd=eo(seg(t,22.2,23));document.querySelector('.feed').style.transform='translateX('+(1-fd)*80+'px)';
+
+  /* S6: 27.5 - 32 */
+  var o6=eo(seg(t,27.5,28));show($('s6'),o6);
+  logo2Paths.forEach(function(p,i){p.style.strokeDashoffset=40*(1-eo(seg(t,27.6+i*.06,28.6+i*.06)))});
+  var a6=eo(seg(t,28,28.8));$('s6t').style.opacity=a6;$('s6t').style.transform='translateY('+(1-a6)*30+'px)';
+  var b6=eo(seg(t,28.5,29.2));$('s6b').style.opacity=b6;$('s6b').style.transform='scale('+(.94+.06*b6)+')';
+  $('sh').style.left=(-40+170*seg(t,29.4,30.4))+'%';
+  $('s6m').style.opacity=eo(seg(t,29,29.8));
+
+  $('fade').style.opacity=Math.max(1-seg(t,0,.5),seg(t,31.3,32));
+};
+window.DURATION=DURATION;
+window.ready=(document.fonts?document.fonts.ready:Promise.resolve()).then(function(){window.renderAt(0);return true});
+
+if(/[?&]play/.test(location.search)){var t0=performance.now();(function loop(now){window.renderAt(((now-t0)/1000)%DURATION);requestAnimationFrame(loop)})(t0)}
+})();
+</script>
+</body>
+</html>
