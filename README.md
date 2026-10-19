@@ -6,8 +6,6 @@ On-chain identity for AI agents on Robinhood Chain (ERC-8004).
 - `index.html` — landing page
 - `app.html` — app: registry (`#registry`), registration (`#register`), agent profile (`#agent-ID`), docs (`#how`)
 
-Optional: `media/hero.mp4` — the landing video. If present it is served locally; otherwise the page falls back to the CDN copy, and then to a canvas animation.
-
 No server, no database, no build step. The site reads and writes the official ERC-8004 Identity Registry directly:
 
 | | |

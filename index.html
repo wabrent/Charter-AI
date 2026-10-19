@@ -9,359 +9,483 @@
 <meta property="og:description" content="On-chain identity for AI agents on Robinhood Chain.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap">
 <style>
-/* Layout: fixed black stage, type locked left on a 1505x700 canvas, registry atmosphere on the right */
+/* Normal document flow, rem-based sizes: the page scrolls and follows browser zoom */
 :root{
-  --s: min(100vw / 1505, 100vh / 700);
-  --red:#c81b1c; --red-d:#b01617; --ink:#fff; --sub:#e6e6e6; --lab:#949494; --bg:#000;
+  --red:#c81b1c; --red-d:#b01617; --ink:#fff; --sub:#d9d9d9; --lab:#8f8f8f; --dim:#5f5f5f;
+  --bg:#000; --panel:#0a0a0a; --line:rgba(255,255,255,.12); --line2:rgba(255,255,255,.22); --ok:#3fae63;
   --SG:'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
   --JB:'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  --bx:60; --by:36; --bs:44;
-  --gx:73; --h1y:-12.5; --h1fs:68.7; --h1lh:76; --h1tr:-2.4;
-  --suby:167.5; --subfs:18.7; --sublh:26; --subtr:-0.87;
-  --ctay:248; --numy:19; --laby:74; --numfs:33.45; --labfs:21.9;
-  --s1x:70.4; --r1x:181; --s2x:213.1; --r2x:356; --s3x:392.6;
-  --hdh:96; --heroh:306; --stath:108;
-  --sa:239; --sb:194; --sc:115;
+  --wrap:min(1240px, 100% - 2 * var(--gut)); --gut:clamp(1rem, 4vw, 3.5rem);
   color-scheme:dark;
 }
-@media (max-width:1023px) and (max-aspect-ratio:1/1){
-  :root{ --s: clamp(0.82px, min(100vw / 900, 100vh / 1200), 1.25px);
-    --bx:56; --by:33; --bs:40; --gx:56;
-    --h1y:-10.25; --h1fs:58; --h1lh:64; --h1tr:-2;
-    --suby:137.4; --subfs:16.2; --sublh:23; --subtr:-0.75;
-    --ctay:206; --numy:15.6; --laby:60.7; --numfs:28; --labfs:18.4;
-    --s1x:54; --r1x:150; --s2x:176; --r2x:300; --s3x:326;
-    --hdh:104; --heroh:260; --stath:96; --sa:340; --sb:276; --sc:163; }
-}
-@media (max-width:599px){
-  :root{ --s: min(100vw / 430, 100vh / 620, 1.02px);
-    --bx:26; --by:21; --bs:34; --gx:26;
-    --h1y:-7.1; --h1fs:39; --h1lh:43.5; --h1tr:-1.35;
-    --suby:108; --subfs:13.4; --sublh:19; --subtr:-0.6;
-    --ctay:165; --numy:13; --laby:50; --numfs:22; --labfs:14.6;
-    --s1x:26; --r1x:110; --s2x:130; --r2x:228; --s3x:248;
-    --hdh:76; --heroh:215; --stath:76; --sa:106; --sb:92; --sc:56; }
-}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#000;overflow:hidden}
-body{-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;color:var(--ink);font-family:var(--JB)}
+html{background:var(--bg);-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:400 1rem/1.55 var(--JB);-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 :focus-visible{outline:2px solid #fff;outline-offset:3px}
-.svgdefs{position:absolute;width:0;height:0;overflow:hidden}
+.wrap{width:var(--wrap);margin-inline:auto}
+.grid-bg{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:64px 64px;opacity:.35;
+  -webkit-mask-image:radial-gradient(ellipse 70% 60% at 75% 30%,#000,transparent 75%);mask-image:radial-gradient(ellipse 70% 60% at 75% 30%,#000,transparent 75%)}
+main,header,footer{position:relative;z-index:1}
 
-.screen{position:fixed;inset:0;overflow:hidden;background:#000}
-.atm{position:absolute;inset:0;pointer-events:none;
-  -webkit-mask-image:linear-gradient(90deg,transparent 22%,#000 58%);mask-image:linear-gradient(90deg,transparent 22%,#000 58%)}
-.atm canvas{width:100%;height:100%;display:block}
-.has-video .atm{display:none}
-.bg,.bg2{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-.bg{filter:url(#grade)}
-.bg video,.bg2 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
-.bg2{filter:url(#grade2);mix-blend-mode:plus-lighter;opacity:.35;
-  -webkit-mask-image:linear-gradient(180deg,transparent 21.5%,#000 100%);mask-image:linear-gradient(180deg,transparent 21.5%,#000 100%)}
-.scrim{position:absolute;inset:0;pointer-events:none;display:none}
-
-.frame{position:absolute;inset:0;display:flex;flex-direction:column;
-  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-.sp{min-height:0}
-.sp-a{flex:var(--sa) 1 0}.sp-b{flex:var(--sb) 1 0}.sp-c{flex:var(--sc) 1 0}
-
-header{position:relative;flex:none;height:calc(var(--hdh) * var(--s))}
-.logo{position:absolute;left:calc(60 * var(--s));top:calc(35 * var(--s));width:calc(45 * var(--s));height:calc(45 * var(--s));display:block}
-.logo svg{width:100%;height:100%;display:block}
-.wordmark{position:absolute;left:calc(122 * var(--s));top:calc(43 * var(--s));font:700 calc(24 * var(--s))/1 var(--SG);letter-spacing:calc(-0.8 * var(--s));white-space:nowrap}
-.wordmark i{font-style:normal;color:var(--red)}
-nav{position:absolute;left:calc(482 * var(--s));top:calc(32 * var(--s));height:calc(58 * var(--s));display:flex;align-items:center}
-nav>*{position:relative;margin-left:calc(40 * var(--s))}
-nav>*:first-child{margin-left:0}
-nav>*:nth-child(2){margin-left:calc(53 * var(--s))}
-nav>*:nth-child(4){margin-left:calc(37 * var(--s))}
-nav .nl{display:flex;align-items:center;gap:calc(9 * var(--s));font:400 calc(19.9 * var(--s))/1 var(--JB);color:#fff;white-space:nowrap;transition:color .2s}
-nav .nl svg{width:calc(11.6 * var(--s));height:calc(7.2 * var(--s));margin-top:calc(-2.6 * var(--s));transition:transform .25s}
-nav .nl[aria-expanded="true"] svg{transform:rotate(180deg)}
-.dd{position:absolute;top:calc(100% + 18 * var(--s));left:calc(-16 * var(--s));min-width:calc(250 * var(--s));background:#000;border:1px solid rgba(255,255,255,.14);padding:calc(10 * var(--s)) 0;display:none;z-index:5}
+/* header */
+header{border-bottom:1px solid var(--line)}
+.hd{display:flex;align-items:center;gap:2rem;height:4.5rem}
+.brand{display:flex;align-items:center;gap:.75rem;font:700 1.375rem/1 var(--SG);letter-spacing:-.03em;white-space:nowrap}
+.brand svg{width:2rem;height:2rem;flex:none}
+.brand i{font-style:normal;color:var(--red)}
+nav{display:flex;align-items:center;gap:2rem;margin-left:1.5rem}
+.nl{display:flex;align-items:center;gap:.5rem;font-size:.95rem;color:var(--sub);white-space:nowrap;transition:color .2s}
+.nl svg{width:.7rem;height:.45rem;transition:transform .25s}
+.nl[aria-expanded="true"]{color:#fff}
+.nl[aria-expanded="true"] svg{transform:rotate(180deg)}
+.nw{position:relative}
+.dd{position:absolute;top:calc(100% + 1rem);left:-1rem;min-width:17rem;background:#000;border:1px solid var(--line2);padding:.5rem 0;display:none;z-index:5}
 .dd.open{display:block}
-.dd a{display:block;padding:calc(10 * var(--s)) calc(16 * var(--s));font:400 calc(16 * var(--s))/1.2 var(--JB);color:var(--sub)}
-.dd a span{display:block;font-size:calc(12.5 * var(--s));color:var(--lab);margin-top:calc(4 * var(--s))}
+.dd a{display:block;padding:.65rem 1rem;font-size:.95rem;color:var(--sub)}
+.dd a span{display:block;font-size:.78rem;color:var(--lab);margin-top:.2rem}
+.hd .btn{margin-left:auto}
 
-.btn{display:inline-flex;align-items:center;justify-content:space-between;gap:calc(11 * var(--s));
-  width:calc(212 * var(--s));height:calc(58 * var(--s));padding:0 calc(22 * var(--s)) 0 calc(18 * var(--s));
-  background:var(--red);color:#fff;border-radius:0;transition:background .2s}
-.btn .lbl{font:480 calc(20.85 * var(--s))/1 var(--SG);font-weight:500;letter-spacing:calc(-0.62 * var(--s));transform:translateY(calc(1.5 * var(--s)));white-space:nowrap}
-.btn svg{width:calc(21.5 * var(--s));height:calc(18 * var(--s));flex:none;transition:transform .25s cubic-bezier(.22,1,.36,1)}
-.btn-top{position:absolute;right:calc(61 * var(--s));top:calc(30 * var(--s))}
-.burger{position:absolute;right:calc(var(--bx) * var(--s));top:calc(var(--by) * var(--s));width:calc(var(--bs) * var(--s));height:calc(var(--bs) * var(--s));display:none;z-index:30}
-.burger i{position:absolute;left:12%;right:12%;height:2px;background:#fff;transition:transform .35s cubic-bezier(.2,.7,.2,1),opacity .2s,right .35s}
-.burger i:nth-child(1){top:30%}.burger i:nth-child(2){top:49%}.burger i:nth-child(3){top:68%;right:53%}
-.nav-open .burger i:nth-child(1){transform:translateY(calc(var(--bs) * var(--s) * .19)) rotate(45deg)}
+.btn{display:inline-flex;align-items:center;gap:.75rem;height:3rem;padding:0 1.25rem;background:var(--red);color:#fff;
+  font:500 1.05rem/1 var(--SG);letter-spacing:-.02em;white-space:nowrap;transition:background .2s}
+.btn svg{width:1.2rem;height:1rem;flex:none;transition:transform .25s cubic-bezier(.22,1,.36,1)}
+.btn.ghost{background:transparent;border:1px solid var(--line2)}
+.burger{display:none;margin-left:auto;width:2.75rem;height:2.75rem;position:relative}
+.burger i{position:absolute;left:20%;right:20%;height:2px;background:#fff;transition:transform .3s,opacity .2s}
+.burger i:nth-child(1){top:32%}.burger i:nth-child(2){top:49%}.burger i:nth-child(3){top:66%}
+.nav-open .burger i:nth-child(1){transform:translateY(.47rem) rotate(45deg)}
 .nav-open .burger i:nth-child(2){opacity:0}
-.nav-open .burger i:nth-child(3){right:12%;transform:translateY(calc(var(--bs) * var(--s) * -.19)) rotate(-45deg)}
+.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg)}
 
-.hero{position:relative;flex:none;height:calc(var(--heroh) * var(--s))}
-h1{position:absolute;left:calc(var(--gx) * var(--s));top:calc(var(--h1y) * var(--s));font:700 calc(var(--h1fs) * var(--s))/calc(var(--h1lh) * var(--s)) var(--SG);letter-spacing:calc(var(--h1tr) * var(--s));white-space:nowrap}
-h1 .ln{display:block}
-h1 .ln>span{display:inline-block}
-.sub{position:absolute;left:calc(var(--gx) * var(--s));top:calc(var(--suby) * var(--s));font:400 calc(var(--subfs) * var(--s))/calc(var(--sublh) * var(--s)) var(--JB);letter-spacing:calc(var(--subtr) * var(--s));color:var(--sub);white-space:nowrap}
-.btn-cta{position:absolute;left:calc(var(--gx) * var(--s));top:calc(var(--ctay) * var(--s))}
+/* mobile menu */
+.menu{display:none;border-bottom:1px solid var(--line);padding:.5rem 0 1.5rem}
+.nav-open .menu{display:block}
+.mlist{list-style:none}
+.mlist>li{border-bottom:1px solid var(--line)}
+.mrow{display:flex;width:100%;align-items:center;justify-content:space-between;padding:1rem 0;font:700 1.5rem/1 var(--SG);letter-spacing:-.03em;text-align:left}
+.mrow svg{width:.9rem;height:.55rem;transition:transform .3s}
+.mrow[aria-expanded="true"] svg{transform:rotate(180deg)}
+.msub{display:none;padding-bottom:.75rem}
+.msub.open{display:block}
+.msub a{display:block;padding:.4rem 0;font-size:.95rem;color:var(--sub)}
+.menu .btn{width:100%;justify-content:space-between;margin-top:1.25rem}
 
-.stats{position:relative;flex:none;height:calc(var(--stath) * var(--s))}
-.st{position:absolute;top:0}
-.st .num{position:absolute;top:calc(var(--numy) * var(--s));font:500 calc(var(--numfs) * var(--s))/1 var(--JB);color:#fff;white-space:nowrap;font-variant-numeric:tabular-nums}
-.st .lab{position:absolute;top:calc(var(--laby) * var(--s));font:400 calc(var(--labfs) * var(--s))/1 var(--SG);letter-spacing:calc(-0.62 * var(--s));color:var(--lab);white-space:nowrap}
-.s1{left:calc(var(--s1x) * var(--s))}.s2{left:calc(var(--s2x) * var(--s))}.s3{left:calc(var(--s3x) * var(--s))}
-.s3 .num{margin-left:calc(-4.4 * var(--s))}
-.rule{position:absolute;top:calc(12 * var(--s));height:calc(92 * var(--s));width:1.5px;background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.21) 50%,rgba(255,255,255,.085))}
-.r1{left:calc(var(--r1x) * var(--s))}.r2{left:calc(var(--r2x) * var(--s))}
-.live-dot{display:inline-block;width:calc(7 * var(--s));height:calc(7 * var(--s));background:var(--red);margin-right:calc(8 * var(--s));vertical-align:middle;animation:blink 1.6s steps(2,end) infinite}
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(2rem,5vw,5rem);align-items:center;padding:clamp(3rem,8vh,6rem) 0 clamp(3rem,7vh,5rem)}
+.eyebrow{font:400 .75rem/1 var(--JB);letter-spacing:.2em;text-transform:uppercase;color:var(--lab)}
+h1{margin-top:1.25rem;font:700 clamp(2.4rem,1.2rem + 3.6vw,4.4rem)/1.05 var(--SG);letter-spacing:-.035em}
+h1 em{font-style:normal;color:var(--red)}
+.sub{margin-top:1.5rem;max-width:34rem;font-size:clamp(.95rem,.9rem + .25vw,1.1rem);color:var(--sub)}
+.ctas{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem}
+.stats{display:flex;flex-wrap:wrap;margin-top:3rem;border-top:1px solid var(--line)}
+.st{padding:1.25rem 2rem 0 0;margin-right:2rem;border-right:1px solid var(--line)}
+.st:last-child{border-right:0;margin-right:0}
+.st .num{font:500 clamp(1.5rem,1.2rem + .9vw,2rem)/1 var(--JB);font-variant-numeric:tabular-nums;white-space:nowrap}
+.st .lab{margin-top:.5rem;font:400 .95rem/1 var(--SG);color:var(--lab)}
+.live-dot{display:inline-block;width:.45rem;height:.45rem;background:var(--red);margin-right:.5rem;vertical-align:middle;animation:blink 1.6s steps(2,end) infinite}
 @keyframes blink{50%{opacity:.25}}
 
-/* Mobile menu */
-.menu{position:fixed;inset:0;z-index:20;background:#000;display:none;flex-direction:column;
-  padding:calc((var(--by) + var(--bs) + 40) * var(--s)) calc(var(--gx) * var(--s)) calc(30 * var(--s) + env(safe-area-inset-bottom,0px));
-  opacity:0;visibility:hidden;transition:opacity .35s,visibility 0s .35s}
-.nav-open .menu{opacity:1;visibility:visible;transition:opacity .35s}
-.menu-tex{position:absolute;inset:0;opacity:.4;pointer-events:none;overflow:hidden;
-  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 60%);mask-image:linear-gradient(180deg,transparent 0%,#000 60%)}
-.menu-tex video{width:100%;height:100%;object-fit:cover;object-position:78% top;filter:url(#grade2)}
-.menu-rule{position:absolute;left:0;right:0;top:0;height:2px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .55s cubic-bezier(.2,.7,.2,1) .04s}
-.nav-open .menu-rule{transform:scaleX(1)}
-.menu-in{position:relative;display:flex;flex-direction:column;height:100%}
-.eyebrow{font:400 11.5px/1 var(--JB);letter-spacing:.22em;text-transform:uppercase;color:var(--lab);margin-bottom:18px}
-.mlist{list-style:none;border-top:1px solid rgba(255,255,255,.12)}
-.mlist>li{border-bottom:1px solid rgba(255,255,255,.12);opacity:0;transform:translateY(10px);transition:opacity .45s,transform .55s cubic-bezier(.22,1,.36,1)}
-.nav-open .mlist>li{opacity:1;transform:none}
-.nav-open .mlist>li:nth-child(1){transition-delay:.08s}.nav-open .mlist>li:nth-child(2){transition-delay:.14s}
-.nav-open .mlist>li:nth-child(3){transition-delay:.20s}.nav-open .mlist>li:nth-child(4){transition-delay:.26s}
-.mrow{display:flex;width:100%;align-items:center;justify-content:space-between;padding:18px 0;font:700 26px/1 var(--SG);letter-spacing:-0.8px;text-align:left}
-.mrow svg{width:14px;height:9px;transition:transform .3s}
-.mrow[aria-expanded="true"] svg{transform:rotate(180deg)}
-.msub{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s cubic-bezier(.22,1,.36,1)}
-.msub.open{grid-template-rows:1fr}
-.msub>div{overflow:hidden}
-.msub a{display:block;padding:0 0 14px;font:400 15px/1.2 var(--JB);color:var(--sub)}
-.msub a:first-child{padding-top:2px}
-.mfoot{margin-top:auto;padding-top:24px}
-.btn-menu{width:100%;height:52px;padding:0 19px 0 16px;gap:10px}
-.btn-menu .lbl{font-size:18px;letter-spacing:-0.5px;transform:translateY(1px)}
-.btn-menu svg{width:20px;height:17px}
-.mnote{margin-top:14px;font:400 12px/1 var(--JB);color:var(--lab);letter-spacing:.04em}
+/* latest agents panel */
+.feed{border:1px solid var(--line2);background:rgba(10,10,10,.85)}
+.feed-hd{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid var(--line)}
+.feed-hd b{font:500 .8rem/1 var(--JB);letter-spacing:.14em;text-transform:uppercase}
+.feed-hd span{font-size:.8rem;color:var(--lab);white-space:nowrap}
+.frow{display:grid;grid-template-columns:auto 2.75rem minmax(0,1fr);gap:1rem;align-items:center;padding:1rem 1.25rem;border-bottom:1px solid var(--line);transition:background .2s}
+.frow .id{font-size:.8rem;color:var(--lab);font-variant-numeric:tabular-nums;min-width:3.5rem}
+.av{width:2.75rem;height:2.75rem;border:1px solid var(--line2);display:grid;place-items:center;font:700 1.1rem/1 var(--SG);overflow:hidden;background:#000}
+.av img{width:100%;height:100%;object-fit:cover;display:block}
+.frow h3{font:500 1.05rem/1.2 var(--SG);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.frow p{margin-top:.2rem;font-size:.8rem;color:var(--lab);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.skel{height:4.8rem;border-bottom:1px solid var(--line);background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);background-size:200% 100%;animation:sk 1.4s linear infinite}
+@keyframes sk{to{background-position:-200% 0}}
+.feed-ft{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;font-size:.9rem;color:var(--sub)}
+.feed-note{padding:1rem 1.25rem;font-size:.85rem;color:var(--lab);border-bottom:1px solid var(--line)}
+
+/* how it works */
+.how{padding:clamp(3rem,8vh,5rem) 0;border-top:1px solid var(--line)}
+.how h2{margin-top:1rem;font:700 clamp(1.75rem,1.3rem + 1.4vw,2.5rem)/1.1 var(--SG);letter-spacing:-.03em}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;margin-top:2.5rem;background:var(--line);border:1px solid var(--line)}
+.step{background:var(--bg);padding:1.75rem 1.5rem}
+.step .n{font-size:.8rem;color:var(--red)}
+.step h3{margin-top:1rem;font:500 1.25rem/1.2 var(--SG)}
+.step p{margin-top:.6rem;font-size:.9rem;color:var(--sub)}
+
+/* ticker */
+.ticker{border-block:1px solid var(--line);overflow:hidden;background:rgba(10,10,10,.7);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.track{display:flex;width:max-content;animation:marquee 60s linear infinite}
+.ticker:hover .track{animation-play-state:paused}
+.track span{display:flex;align-items:center;gap:.75rem;padding:1.1rem 1.75rem;font-size:.85rem;color:var(--sub);white-space:nowrap}
+.track span::before{content:'';width:.4rem;height:.4rem;background:var(--red);flex:none}
+.track b{font-weight:500;color:#fff}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* sections */
+.sec{padding:clamp(3.5rem,9vh,6rem) 0;border-top:1px solid var(--line)}
+.sec h2{margin-top:1rem;font:700 clamp(1.75rem,1.3rem + 1.4vw,2.6rem)/1.1 var(--SG);letter-spacing:-.03em;max-width:40rem}
+.sec .lead{margin-top:1rem;max-width:40rem;color:var(--sub);font-size:.95rem}
+
+/* on-chain record */
+.rec{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(2rem,5vw,4.5rem);align-items:center}
+.facts{list-style:none;margin-top:2rem;border-top:1px solid var(--line)}
+.facts li{display:grid;grid-template-columns:7.5rem minmax(0,1fr);gap:1rem;padding:.9rem 0;border-bottom:1px solid var(--line);font-size:.9rem}
+.facts b{font-weight:500;color:var(--lab)}
+.code{border:1px solid var(--line2);background:#050505;position:relative;overflow:hidden}
+.code-hd{display:flex;align-items:center;gap:.5rem;padding:.75rem 1rem;border-bottom:1px solid var(--line);font-size:.75rem;color:var(--lab)}
+.code-hd i{width:.6rem;height:.6rem;border:1px solid var(--line2)}
+.code-hd i:first-child{background:var(--red);border-color:var(--red)}
+.code-hd span{margin-left:auto}
+.code pre{margin:0;padding:1.25rem 1.25rem 1.5rem;font:400 .82rem/1.7 var(--JB);color:var(--sub);white-space:pre-wrap;word-break:break-all;min-height:22rem}
+.code .k{color:#fff}.code .s{color:#e58a8a}.code .b{color:var(--red)}.code .p{color:var(--dim)}
+.caret{display:inline-block;width:.55em;height:1.1em;background:var(--red);vertical-align:text-bottom;animation:blink 1s steps(2,end) infinite}
+
+/* features */
+.feats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;margin-top:2.5rem;background:var(--line);border:1px solid var(--line)}
+.feat{position:relative;background:var(--bg);padding:2rem 1.5rem;overflow:hidden}
+.feat::before{content:'';position:absolute;inset:0;background:radial-gradient(300px circle at var(--fx,50%) var(--fy,0%),rgba(200,27,28,.14),transparent 70%);opacity:0;transition:opacity .3s}
+.feat svg{width:2rem;height:2rem;stroke:var(--red);fill:none;stroke-width:1.5;position:relative}
+.feat h3{position:relative;margin-top:1.25rem;font:500 1.2rem/1.2 var(--SG)}
+.feat p{position:relative;margin-top:.6rem;font-size:.88rem;color:var(--sub)}
+.feat svg .draw{stroke-dasharray:80;stroke-dashoffset:80;transition:stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1) .2s}
+.feat.in svg .draw{stroke-dashoffset:0}
+@media (hover:hover){.feat:hover::before{opacity:1}}
+
+/* faq */
+.faq{margin-top:2.5rem;border-top:1px solid var(--line);max-width:52rem}
+.qa{border-bottom:1px solid var(--line)}
+.qa button{display:flex;width:100%;justify-content:space-between;align-items:center;gap:1rem;padding:1.25rem 0;font:500 1.1rem/1.3 var(--SG);text-align:left}
+.qa button i{position:relative;width:.9rem;height:.9rem;flex:none}
+.qa button i::before,.qa button i::after{content:'';position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:var(--red);transition:transform .3s}
+.qa button i::after{transform:rotate(90deg)}
+.qa.open button i::after{transform:rotate(0)}
+.qa .ans{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s cubic-bezier(.22,1,.36,1)}
+.qa.open .ans{grid-template-rows:1fr}
+.qa .ans>div{overflow:hidden}
+.qa .ans p{padding:0 0 1.25rem;font-size:.92rem;color:var(--sub);max-width:46rem}
+.qa code{font-size:.85em;color:#fff;word-break:break-all}
+
+/* final cta */
+.cta{position:relative;padding:clamp(3.5rem,10vh,6.5rem) 0;border-top:1px solid var(--line);overflow:hidden;text-align:center}
+.cta::before{content:'';position:absolute;left:50%;top:50%;width:min(60rem,140vw);aspect-ratio:1;transform:translate(-50%,-50%);
+  background:conic-gradient(from 0deg,transparent,rgba(200,27,28,.22),transparent 30%);border-radius:50%;animation:spin 14s linear infinite;
+  -webkit-mask-image:radial-gradient(circle,#000 30%,transparent 70%);mask-image:radial-gradient(circle,#000 30%,transparent 70%)}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.cta>*{position:relative}
+.cta h2{margin:1rem auto 0;font:700 clamp(2rem,1.4rem + 2.4vw,3.4rem)/1.05 var(--SG);letter-spacing:-.035em;max-width:44rem}
+.cta .ctas{justify-content:center}
+
+footer{border-top:1px solid var(--line);padding:1.75rem 0 calc(1.75rem + env(safe-area-inset-bottom,0px))}
+@media (max-width:1023px){.rec{grid-template-columns:minmax(0,1fr)}.feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:699px){.feats{grid-template-columns:minmax(0,1fr)}.facts li{grid-template-columns:minmax(0,1fr);gap:.2rem}.code pre{font-size:.75rem;min-height:0}}
+.ft{display:flex;flex-wrap:wrap;gap:.75rem 2rem;justify-content:space-between;font-size:.8rem;color:var(--lab)}
+.ft a:hover{color:#fff}
 
 @media (hover:hover){
-  nav .nl:hover{color:var(--red)}
+  .nl:hover,.mrow:hover{color:var(--red)}
   .btn:hover{background:var(--red-d)}
-  .btn:hover svg{transform:translateX(calc(3 * var(--s)))}
+  .btn.ghost:hover{background:rgba(255,255,255,.06)}
+  .btn:hover svg{transform:translateX(3px)}
   .dd a:hover{color:#fff;background:rgba(255,255,255,.05)}
-  .mrow:hover{color:var(--red)}
+  .frow:hover{background:rgba(255,255,255,.04)}
   .msub a:hover{color:#fff}
 }
 @media (max-width:1023px){
-  nav,.btn-top{display:none}
+  nav,.hd>.btn{display:none}
   .burger{display:block}
-  .menu{display:flex}
-  .wordmark{left:calc((var(--bx) + 0) * var(--s) + 0px);display:none}
+  .hero{grid-template-columns:minmax(0,1fr)}
 }
-@media (max-width:1023px) and (max-aspect-ratio:1/1){
-  .bg2{display:none}
-  .bg video{object-position:right top;transform:scale(1.18);transform-origin:right top}
-  .bg{-webkit-mask-image:linear-gradient(180deg,#000 0 40%,transparent 64%);mask-image:linear-gradient(180deg,#000 0 40%,transparent 64%)}
-  .scrim{display:block;background:linear-gradient(100deg,#000 26%,rgba(0,0,0,.74) 50%,rgba(0,0,0,.18) 76%,transparent 92%)}
-  .logo{left:calc(56 * var(--s));top:calc(33 * var(--s));width:calc(40 * var(--s));height:calc(40 * var(--s))}
-  .atm{-webkit-mask-image:linear-gradient(180deg,#000 0 40%,transparent 70%);mask-image:linear-gradient(180deg,#000 0 40%,transparent 70%)}
-  .btn{width:calc(174 * var(--s));height:calc(47.6 * var(--s));padding:0 calc(18 * var(--s)) 0 calc(14.8 * var(--s));gap:calc(9 * var(--s))}
-  .btn .lbl{font-size:calc(17.1 * var(--s))}
+@media (max-width:699px){
+  .steps{grid-template-columns:minmax(0,1fr)}
+  .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .st{padding:1.1rem .75rem 0;margin:0}
+  .st:first-child{padding-left:0}
+  .st .num{font-size:1.35rem}
+  .st .lab{font-size:.8rem;line-height:1.25}
+  .feed-hd span{display:none}
+  .frow{grid-template-columns:2.75rem minmax(0,1fr)}
+  .frow .id{display:none}
 }
-@media (max-width:599px){
-  .bg video,.bg2 video{object-position:78% top;transform:none}
-  .bg{-webkit-mask-image:none;mask-image:none}
-  .bg2{display:block;-webkit-mask-image:linear-gradient(180deg,transparent 10%,#000 60%);mask-image:linear-gradient(180deg,transparent 10%,#000 60%)}
-  .scrim{display:block;background:linear-gradient(180deg,rgba(0,0,0,.10) 0%,rgba(0,0,0,.50) 24%,rgba(0,0,0,.86) 42%,#000 66%)}
-  .atm{-webkit-mask-image:none;mask-image:none}
-  .logo{left:calc(26 * var(--s));top:calc(21 * var(--s));width:calc(34 * var(--s));height:calc(34 * var(--s))}
-  .btn{width:calc(185 * var(--s));height:calc(50 * var(--s));padding:0 calc(19.1 * var(--s)) 0 calc(15.7 * var(--s));gap:calc(9.6 * var(--s))}
-  .btn .lbl{font-size:calc(17.5 * var(--s))}
-  .menu{padding-left:26px;padding-right:26px}
-}
+@media (min-width:1024px){.menu{display:none!important}}
 
-/* Entrance: initial states, removed when the timeline finishes */
-html.intro .logo,html.intro nav>*,html.intro .burger,html.intro .sub,html.intro .st .num,html.intro .st .lab,html.intro .wordmark{opacity:0}
-html.intro .logo{transform:scale(.9)}
-html.intro .rule{transform:scaleY(0);transform-origin:center}
-html.intro .btn-top,html.intro .btn-cta{clip-path:inset(0 100% 0 0)}
-html.intro h1 .ln{overflow:hidden;padding-bottom:calc(6 * var(--s));margin-bottom:calc(-6 * var(--s))}
-html.intro h1 .ln>span{transform:translateY(120%)}
+/* entrance */
+.rise{animation:rise .7s cubic-bezier(.22,1,.36,1) both}
+.d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.45s}.d4{animation-delay:.6s}.d5{animation-delay:.75s}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
+/* headline: words slide up out of a mask */
+h1 .w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em}
+h1 .w>span{display:inline-block;animation:wordUp .9s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(.12s + var(--i) * .07s)}
+@keyframes wordUp{from{transform:translateY(105%)}to{transform:none}}
+h1 em{position:relative}
+h1 em::after{content:'';position:absolute;left:0;right:0;bottom:.02em;height:.07em;background:var(--red);transform:scaleX(0);transform-origin:left;animation:underline .8s cubic-bezier(.22,1,.36,1) 1s forwards}
+@keyframes underline{to{transform:scaleX(1)}}
+
+/* background: drifting grid, scanning line, cursor spotlight */
+.grid-bg{animation:drift 30s linear infinite}
+@keyframes drift{to{background-position:64px 64px,64px 64px}}
+.scan{position:fixed;left:0;right:0;top:0;height:1px;z-index:0;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(200,27,28,.9) 50%,transparent);box-shadow:0 0 18px 2px rgba(200,27,28,.35);
+  animation:scan 7s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes scan{0%{transform:translateY(-5vh);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(105vh);opacity:0}}
+.spot{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .4s;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(200,27,28,.10),transparent 70%)}
+.spot.on{opacity:1}
+
+/* feed rows stagger in; the newest gets a red sweep */
+.frow{animation:rowIn .6s cubic-bezier(.22,1,.36,1) both;animation-delay:calc(var(--i,0) * .08s);position:relative}
+@keyframes rowIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+.frow.new::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--red);animation:pulseBar 1.6s ease-in-out infinite}
+@keyframes pulseBar{50%{opacity:.25}}
+.feed{position:relative;overflow:hidden}
+.feed::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(255,255,255,.035) 50%,transparent);height:40%;animation:feedScan 4.5s linear infinite}
+@keyframes feedScan{from{transform:translateY(-100%)}to{transform:translateY(250%)}}
+
+/* buttons: light sweep on hover */
+.btn{position:relative;overflow:hidden}
+.btn::before{content:'';position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);transform:skewX(-20deg);transition:left .6s cubic-bezier(.22,1,.36,1)}
+@media (hover:hover){.btn:hover::before{left:130%}}
+
+/* scroll reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--i,0) * .1s)}
+.reveal.in{opacity:1;transform:none}
+.step{transition:background .3s}
+.step .n{display:inline-block;transition:transform .3s}
+@media (hover:hover){.step:hover{background:#0b0b0b}.step:hover .n{transform:translateX(4px)}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
-<script>
-(function(){try{if(Element.prototype.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('intro');setTimeout(function(){document.documentElement.classList.remove('intro')},4000)}}catch(e){}})();
-</script>
 </head>
 <body>
-<svg class="svgdefs" aria-hidden="true">
-  <filter id="grade" color-interpolation-filters="sRGB">
-    <feComponentTransfer>
-      <feFuncR type="table" tableValues="0.0018 0.0105 0.0154 0.0228 0.0307 0.0404 0.0485 0.0585 0.0719 0.0923 0.1205 0.1466 0.1657 0.1866 0.2197 0.2405 0.2485 0.2921 0.3362 0.3465 0.3472 0.3781 0.3781 0.4078 0.4199 0.4391 0.4604 0.4763 0.4798 0.5197 0.5473 0.5720 0.5995 0.6048 0.6232 0.6322 0.6483 0.6734 0.7201 0.7201 0.7410 0.7707 0.7707 0.7790 0.8084 0.8084 0.8390 0.8595 0.8707 0.8870 0.8993 0.9085 0.9132 0.9132 0.9162 0.9162 0.9162 0.9162 0.9162 0.9162 0.9162 0.9162 0.9162 0.9238 0.9300"/>
-      <feFuncG type="table" tableValues="0.0023 0.0106 0.0159 0.0250 0.0333 0.0445 0.0535 0.0620 0.0707 0.0827 0.0936 0.1063 0.1214 0.1402 0.1678 0.1727 0.2029 0.2176 0.2461 0.2757 0.2814 0.3050 0.3415 0.3692 0.3826 0.3884 0.4617 0.4617 0.4617 0.4643 0.4643 0.4808 0.5706 0.6005 0.6005 0.6390 0.6390 0.6390 0.6390 0.6390 0.6390 0.6390 0.6390 0.6390 0.6524 0.6664 0.6805 0.6945 0.7086 0.7227 0.7367 0.7508 0.7648 0.7789 0.7929 0.8070 0.8211 0.8351 0.8492 0.8632 0.8773 0.8913 0.9054 0.9195 0.9300"/>
-      <feFuncB type="table" tableValues="0.0021 0.0110 0.0187 0.0311 0.0377 0.0466 0.0584 0.0706 0.0791 0.0924 0.1039 0.1145 0.1316 0.1464 0.1614 0.1719 0.1887 0.2014 0.2247 0.2458 0.2954 0.2954 0.3089 0.3938 0.3938 0.3988 0.3988 0.4581 0.4581 0.4762 0.4762 0.4763 0.5374 0.5560 0.5813 0.5813 0.5813 0.5813 0.5835 0.5969 0.6104 0.6238 0.6373 0.6507 0.6642 0.6777 0.6911 0.7046 0.7181 0.7315 0.7449 0.7584 0.7719 0.7853 0.7988 0.8123 0.8257 0.8391 0.8526 0.8661 0.8795 0.8930 0.9065 0.9199 0.9300"/>
-    </feComponentTransfer>
-  </filter>
-  <filter id="grade2" color-interpolation-filters="sRGB">
-    <feComponentTransfer>
-      <feFuncR type="table" tableValues="0.0016 0.0092 0.0136 0.0201 0.0270 0.0356 0.0427 0.0515 0.0633 0.0812 0.1060 0.1290 0.1458 0.1642 0.1933 0.2116 0.2187 0.2570 0.2959 0.3049 0.3055 0.3327 0.3327 0.3589 0.3695 0.3864 0.4052 0.4191 0.4222 0.4573 0.4816 0.5034 0.5276 0.5322 0.5484 0.5563 0.5705 0.5926 0.6337 0.6337 0.6521 0.6782 0.6782 0.6855 0.7114 0.7114 0.7383 0.7564 0.7662 0.7806 0.7914 0.7995 0.8036 0.8036 0.8063 0.8063 0.8063 0.8063 0.8063 0.8063 0.8063 0.8063 0.8063 0.8129 0.8184"/>
-      <feFuncG type="table" tableValues="0.0015 0.0069 0.0103 0.0163 0.0216 0.0289 0.0348 0.0403 0.0460 0.0538 0.0608 0.0691 0.0789 0.0911 0.1091 0.1123 0.1319 0.1414 0.1600 0.1792 0.1829 0.1983 0.2220 0.2400 0.2487 0.2525 0.3001 0.3001 0.3001 0.3018 0.3018 0.3125 0.3709 0.3903 0.3903 0.4153 0.4153 0.4153 0.4153 0.4153 0.4153 0.4153 0.4153 0.4153 0.4241 0.4332 0.4423 0.4514 0.4606 0.4698 0.4789 0.4880 0.4971 0.5063 0.5154 0.5246 0.5337 0.5428 0.5520 0.5611 0.5702 0.5793 0.5885 0.5977 0.6045"/>
-      <feFuncB type="table" tableValues="0.0013 0.0066 0.0112 0.0187 0.0226 0.0280 0.0350 0.0424 0.0475 0.0554 0.0623 0.0687 0.0790 0.0878 0.0968 0.1031 0.1132 0.1208 0.1348 0.1475 0.1772 0.1772 0.1853 0.2363 0.2363 0.2393 0.2393 0.2749 0.2749 0.2857 0.2857 0.2858 0.3224 0.3336 0.3488 0.3488 0.3488 0.3488 0.3501 0.3581 0.3662 0.3743 0.3824 0.3904 0.3985 0.4066 0.4147 0.4228 0.4309 0.4389 0.4469 0.4550 0.4631 0.4712 0.4793 0.4874 0.4954 0.5035 0.5116 0.5197 0.5277 0.5358 0.5439 0.5519 0.5580"/>
-    </feComponentTransfer>
-  </filter>
-</svg>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="scan" aria-hidden="true"></div>
+<div class="spot" id="spot" aria-hidden="true"></div>
 
-<div class="screen" id="screen">
-  <div class="atm" aria-hidden="true"><canvas id="atm"></canvas></div>
-  <div class="bg" aria-hidden="true"><video autoplay muted loop playsinline preload="auto"><source src="media/hero.mp4" type="video/mp4"><source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260809_132544_b6ef0174-ed95-45ad-9a2f-ccb8acfbdce8.mp4" type="video/mp4"></video></div>
-  <div class="bg2" aria-hidden="true"><video autoplay muted loop playsinline preload="auto"><source src="media/hero.mp4" type="video/mp4"><source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260809_132544_b6ef0174-ed95-45ad-9a2f-ccb8acfbdce8.mp4" type="video/mp4"></video></div>
-  <div class="scrim" aria-hidden="true"></div>
-
-  <div class="frame">
-    <header>
-      <a class="logo" href="#" aria-label="Charter AI home">
-        <svg viewBox="0 0 46 46" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="butt" aria-hidden="true">
-          <g><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
-          <g transform="rotate(90 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
-          <g transform="rotate(180 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
-          <g transform="rotate(270 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
-        </svg>
-      </a>
-      <span class="wordmark">Charter<i>.</i>AI</span>
-      <nav aria-label="Main">
-        <a class="nl" href="#">Home</a>
-        <div class="nw"><button class="nl" type="button" aria-expanded="false" data-dd="dd-reg">Registry<svg viewBox="0 0 11 6" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M1 1L5.5 5L10 1"/></svg></button>
-          <div class="dd" id="dd-reg" role="menu">
-            <a href="app.html#registry" role="menuitem">Browse agents<span>Every ERC-8004 agent on Robinhood Chain</span></a>
-            <a href="app.html#register" role="menuitem">Register an agent<span>Form, wallet, one transaction</span></a>
-            <a href="https://robinhoodchain.blockscout.com/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener" role="menuitem">Identity Registry<span>0x8004…a432 on Blockscout</span></a>
-          </div></div>
-        <div class="nw"><button class="nl" type="button" aria-expanded="false" data-dd="dd-docs">Docs<svg viewBox="0 0 11 6" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M1 1L5.5 5L10 1"/></svg></button>
-          <div class="dd" id="dd-docs" role="menu">
-            <a href="app.html#how" role="menuitem">How it works<span>What gets written on chain</span></a>
-            <a href="https://eips.ethereum.org/EIPS/eip-8004" target="_blank" rel="noopener" role="menuitem">ERC-8004 standard<span>Trustless Agents specification</span></a>
-            <a href="https://github.com/erc-8004/erc-8004-contracts" target="_blank" rel="noopener" role="menuitem">Registry contracts<span>Source and deployments</span></a>
-          </div></div>
-        <a class="nl" href="app.html#registry">App</a>
-      </nav>
-      <a class="btn btn-top" href="app.html#register"><span class="lbl">Launch app</span>
-        <svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></a>
-      <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
-    </header>
-
-    <div class="sp sp-a"></div>
-
-    <section class="hero">
-      <h1>
-        <span class="ln"><span>Identity built into</span></span>
-        <span class="ln"><span>every AI agent</span></span>
-      </h1>
-      <p class="sub">Register your agent on Robinhood Chain,<br>verifiable by any app, owned by you.</p>
-      <a class="btn btn-cta" href="app.html#register"><span class="lbl">Register agent</span>
-        <svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></a>
-    </section>
-
-    <div class="sp sp-b"></div>
-
-    <section class="stats" aria-label="Key facts">
-      <div class="st s1"><div class="num">&lt;60s</div><div class="lab">To register</div></div>
-      <div class="rule r1"></div>
-      <div class="st s2"><div class="num">$0</div><div class="lab">Platform fee</div></div>
-      <div class="rule r2"></div>
-      <div class="st s3"><div class="num" id="liveNum">8004</div><div class="lab" id="liveLab">ERC standard</div></div>
-    </section>
-
-    <div class="sp sp-c"></div>
+<header>
+  <div class="wrap hd">
+    <a class="brand" href="#" aria-label="Charter AI home">
+      <svg viewBox="0 0 46 46" fill="none" stroke="#fff" stroke-width="3" aria-hidden="true">
+        <g><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+        <g transform="rotate(90 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+        <g transform="rotate(180 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+        <g transform="rotate(270 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+      </svg>
+      <span>Charter<i>.</i>AI</span>
+    </a>
+    <nav aria-label="Main">
+      <a class="nl" href="#">Home</a>
+      <div class="nw"><button class="nl" type="button" aria-expanded="false" data-dd="dd-reg">Registry<svg viewBox="0 0 11 6" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M1 1L5.5 5L10 1"/></svg></button>
+        <div class="dd" id="dd-reg" role="menu">
+          <a href="app.html#registry" role="menuitem">Browse agents<span>Every ERC-8004 agent on Robinhood Chain</span></a>
+          <a href="app.html#register" role="menuitem">Register an agent<span>Form, wallet, one transaction</span></a>
+          <a href="https://robinhoodchain.blockscout.com/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener" role="menuitem">Identity Registry<span>0x8004…a432 on Blockscout</span></a>
+        </div></div>
+      <div class="nw"><button class="nl" type="button" aria-expanded="false" data-dd="dd-docs">Docs<svg viewBox="0 0 11 6" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M1 1L5.5 5L10 1"/></svg></button>
+        <div class="dd" id="dd-docs" role="menu">
+          <a href="app.html#how" role="menuitem">How it works<span>What gets written on chain</span></a>
+          <a href="https://eips.ethereum.org/EIPS/eip-8004" target="_blank" rel="noopener" role="menuitem">ERC-8004 standard<span>Trustless Agents specification</span></a>
+          <a href="https://github.com/erc-8004/erc-8004-contracts" target="_blank" rel="noopener" role="menuitem">Registry contracts<span>Source and deployments</span></a>
+        </div></div>
+      <a class="nl" href="app.html#registry">App</a>
+    </nav>
+    <a class="btn" href="app.html#register">Launch app<svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></a>
+    <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
   </div>
-
-  <div class="menu" id="menu" aria-hidden="true">
-    <div class="menu-tex" aria-hidden="true"><video autoplay muted loop playsinline preload="auto"><source src="media/hero.mp4" type="video/mp4"><source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260809_132544_b6ef0174-ed95-45ad-9a2f-ccb8acfbdce8.mp4" type="video/mp4"></video></div>
-    <div class="menu-rule"></div>
-    <div class="menu-in">
-      <div class="eyebrow">Menu</div>
+  <div class="menu" id="menu">
+    <div class="wrap">
       <ul class="mlist">
         <li><a class="mrow" href="#">Home</a></li>
         <li><button class="mrow" type="button" aria-expanded="false" data-acc="acc-reg">Registry<svg viewBox="0 0 11 6" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M1 1L5.5 5L10 1"/></svg></button>
-          <div class="msub" id="acc-reg"><div>
+          <div class="msub" id="acc-reg">
             <a href="app.html#registry">Browse agents</a>
             <a href="app.html#register">Register an agent</a>
             <a href="https://robinhoodchain.blockscout.com/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener">Identity Registry</a>
-          </div></div></li>
+          </div></li>
         <li><button class="mrow" type="button" aria-expanded="false" data-acc="acc-docs">Docs<svg viewBox="0 0 11 6" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M1 1L5.5 5L10 1"/></svg></button>
-          <div class="msub" id="acc-docs"><div>
+          <div class="msub" id="acc-docs">
             <a href="app.html#how">How it works</a>
             <a href="https://eips.ethereum.org/EIPS/eip-8004" target="_blank" rel="noopener">ERC-8004 standard</a>
             <a href="https://github.com/erc-8004/erc-8004-contracts" target="_blank" rel="noopener">Registry contracts</a>
-          </div></div></li>
+          </div></li>
         <li><a class="mrow" href="app.html#registry">App</a></li>
       </ul>
-      <div class="mfoot">
-        <a class="btn btn-menu" href="app.html#register"><span class="lbl">Register agent</span>
-          <svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></a>
-        <div class="mnote">ERC-8004 &nbsp;/&nbsp; Robinhood Chain &nbsp;/&nbsp; ID 4663</div>
-      </div>
+      <a class="btn" href="app.html#register">Register agent<svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></a>
     </div>
   </div>
-</div>
+</header>
+
+<main>
+  <section class="wrap hero">
+    <div>
+      <div class="eyebrow rise d1">ERC-8004 · Robinhood Chain</div>
+      <h1 aria-label="Identity built into every AI agent"><span class="w"><span style="--i:0">Identity</span></span> <span class="w"><span style="--i:1">built</span></span> <span class="w"><span style="--i:2">into</span></span><br><span class="w"><span style="--i:3">every</span></span> <em><span class="w"><span style="--i:4">AI</span></span> <span class="w"><span style="--i:5">agent</span></span></em></h1>
+      <p class="sub rise d3">Register your agent on Robinhood Chain in under a minute. Its profile lives on chain, any app can verify it, and your wallet owns it.</p>
+      <div class="ctas rise d4">
+        <a class="btn" href="app.html#register">Register agent<svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></a>
+        <a class="btn ghost" href="app.html#registry">Browse registry</a>
+      </div>
+      <div class="stats rise d5" aria-label="Key facts">
+        <div class="st"><div class="num">&lt;60s</div><div class="lab">To register</div></div>
+        <div class="st"><div class="num">$0</div><div class="lab">Platform fee</div></div>
+        <div class="st"><div class="num" id="liveNum">8004</div><div class="lab" id="liveLab">ERC standard</div></div>
+      </div>
+    </div>
+
+    <aside class="feed rise d3" aria-label="Latest agents on chain">
+      <div class="feed-hd"><b><span class="live-dot"></span>Latest on chain</b><span>Identity Registry</span></div>
+      <div id="feed"><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+      <a class="feed-ft" href="app.html#registry"><span>Open the full registry</span><span aria-hidden="true">→</span></a>
+    </aside>
+  </section>
+
+  <div class="ticker" aria-label="Recently registered agents"><div class="track" id="track">
+    <span><b>ERC-8004</b> Trustless Agents standard</span><span><b>Robinhood Chain</b> chain ID 4663</span><span><b>0x8004…a432</b> Identity Registry</span><span><b>Web · MCP · A2A</b> service endpoints</span><span><b>x402</b> payments flag</span><span><b>ERC-721</b> agent ownership</span>
+  </div></div>
+
+  <section class="sec">
+    <div class="wrap rec">
+      <div>
+        <div class="eyebrow reveal">On chain, not on a server</div>
+        <h2 class="reveal" style="--i:1">The whole profile is stored in the registry</h2>
+        <p class="lead reveal" style="--i:2">Charter AI packs the profile into a <code>data:</code> URI and writes it with one call to <code>register()</code>. No database, no IPFS pin that can go offline.</p>
+        <ul class="facts reveal" style="--i:3">
+          <li><b>Agent ID</b><span>ERC-721 token ID, minted to your wallet</span></li>
+          <li><b>Profile</b><span>Name, description, avatar, services</span></li>
+          <li><b>Services</b><span>web, MCP, A2A, email, ENS, X</span></li>
+          <li><b>Edits</b><span>The owner calls <code>setAgentURI</code> at any time</span></li>
+          <li><b>Cost</b><span>Gas in ETH only. Charter AI charges nothing</span></li>
+        </ul>
+      </div>
+      <div class="code reveal" style="--i:2">
+        <div class="code-hd"><i></i><i></i><i></i><span>registration-v1.json</span></div>
+        <pre id="json" aria-label="Example registration file"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="eyebrow reveal">Why register</div>
+      <h2 class="reveal" style="--i:1">An identity other apps can check without asking you</h2>
+      <div class="feats">
+        <div class="feat reveal" style="--i:0"><svg viewBox="0 0 32 32"><path class="draw" d="M16 3l11 4v8c0 7-5 12-11 14C10 27 5 22 5 15V7z"/><path class="draw" d="M11 16l4 4 7-8"/></svg><h3>Owned by your wallet</h3><p>The agent is an NFT. Only the owner can edit the profile or transfer it.</p></div>
+        <div class="feat reveal" style="--i:1"><svg viewBox="0 0 32 32"><circle class="draw" cx="14" cy="14" r="8"/><path class="draw" d="M20 20l8 8"/></svg><h3>Verifiable by anyone</h3><p>Lenders, marketplaces and other agents read the same registry by agent ID.</p></div>
+        <div class="feat reveal" style="--i:2"><svg viewBox="0 0 32 32"><path class="draw" d="M4 10h24M4 22h24"/><path class="draw" d="M10 4l-4 24M26 4l-4 24"/></svg><h3>One standard</h3><p>ERC-8004 uses the same registry address on every supported chain.</p></div>
+        <div class="feat reveal" style="--i:3"><svg viewBox="0 0 32 32"><rect class="draw" x="4" y="6" width="24" height="20"/><path class="draw" d="M4 12h24M9 18h6"/></svg><h3>Endpoints in one place</h3><p>Publish where to reach the agent: web, MCP, A2A, email, ENS or X.</p></div>
+        <div class="feat reveal" style="--i:4"><svg viewBox="0 0 32 32"><circle class="draw" cx="16" cy="16" r="12"/><path class="draw" d="M20 11h-6a3 3 0 000 6h4a3 3 0 010 6h-6M16 7v3M16 23v3"/></svg><h3>Ready for x402</h3><p>Flag that the agent accepts x402 payments so clients know they can pay per call.</p></div>
+        <div class="feat reveal" style="--i:5"><svg viewBox="0 0 32 32"><path class="draw" d="M6 16h20M16 6v20"/><circle class="draw" cx="16" cy="16" r="12"/></svg><h3>No platform fee</h3><p>No account, no subscription. You pay network gas and nothing else.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how">
+    <div class="wrap">
+      <div class="eyebrow reveal">How it works</div>
+      <h2 class="reveal" style="--i:1">Three steps, one transaction</h2>
+      <div class="steps">
+        <div class="step reveal" style="--i:0"><div class="n">01</div><h3>Describe the agent</h3><p>Name, description, avatar and the endpoints other apps can reach: web, MCP, A2A.</p></div>
+        <div class="step reveal" style="--i:1"><div class="n">02</div><h3>Connect a wallet</h3><p>MetaMask or Rabby. The wallet that signs becomes the agent's owner.</p></div>
+        <div class="step reveal" style="--i:2"><div class="n">03</div><h3>Mint the identity</h3><p>The profile is written to the official ERC-8004 registry. Gas is paid in ETH on Robinhood Chain.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="eyebrow reveal">FAQ</div>
+      <h2 class="reveal" style="--i:1">Before you register</h2>
+      <div class="faq reveal" style="--i:2">
+        <div class="qa"><button type="button" aria-expanded="false">What is ERC-8004?<i></i></button><div class="ans"><div><p>A standard for trustless AI agents. Its Identity Registry gives every agent an ERC-721 token whose URI points to a registration file with the agent's name, description and services.</p></div></div></div>
+        <div class="qa"><button type="button" aria-expanded="false">How much does it cost?<i></i></button><div class="ans"><div><p>Charter AI charges nothing. You pay Robinhood Chain gas in ETH, and your wallet shows the exact amount before you confirm. Larger avatars cost more gas, so uploads are resized.</p></div></div></div>
+        <div class="qa"><button type="button" aria-expanded="false">Can I change the profile later?<i></i></button><div class="ans"><div><p>Yes. The owner can update it with <code>setAgentURI</code> or transfer the agent to another wallet. Old versions stay in chain history.</p></div></div></div>
+        <div class="qa"><button type="button" aria-expanded="false">What should not go into the profile?<i></i></button><div class="ans"><div><p>Everything you enter is public and permanent. Never put private keys, API secrets or personal data in it.</p></div></div></div>
+        <div class="qa"><button type="button" aria-expanded="false">Which contract does it use?<i></i></button><div class="ans"><div><p>The official ERC-8004 Identity Registry at <code>0x8004A169FB4a3325136EB29fA0ceB6D2e539a432</code> on Robinhood Chain. Charter AI is an independent interface to it.</p></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="wrap">
+      <div class="eyebrow reveal">Start now</div>
+      <h2 class="reveal" style="--i:1">Give your agent an identity in under a minute</h2>
+      <div class="ctas reveal" style="--i:2">
+        <a class="btn" href="app.html#register">Register agent<svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></a>
+        <a class="btn ghost" href="app.html#registry">Browse registry</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap ft">
+    <span>Charter AI · independent interface to ERC-8004 on Robinhood Chain (ID 4663). Experimental software, use at your own risk.</span>
+    <a href="https://robinhoodchain.blockscout.com/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener">Registry 0x8004…a432</a>
+  </div>
+</footer>
 
 <script>
 (function(){
-  var root=document.documentElement, body=document.body, screen=document.getElementById('screen');
-  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  'use strict';
+  var body=document.body, reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---------- videos: sync + fallback atmosphere ---------- */
-  var vids=[].slice.call(document.querySelectorAll('video'));
-  var master=vids[0];
-  if(reduce){vids.forEach(function(v){v.removeAttribute('autoplay');try{v.pause()}catch(e){}})}
-  master.addEventListener('loadeddata',function(){screen.classList.add('has-video')});
-  master.addEventListener('timeupdate',function(){
-    vids.forEach(function(v){if(v!==master&&v.readyState>1&&Math.abs(v.currentTime-master.currentTime)>0.12){try{v.currentTime=master.currentTime}catch(e){}}});
-  });
+  /* ---------- scroll reveal ---------- */
+  var rev=[].slice.call(document.querySelectorAll('.reveal'));
+  if(reduce||!('IntersectionObserver' in window))rev.forEach(function(e){e.classList.add('in')});
+  else{var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.15});rev.forEach(function(e){io.observe(e)})}
 
-  /* Registry lattice: drawn when the video plate is unavailable */
-  var cv=document.getElementById('atm'), cx=cv.getContext('2d'), W=0,H=0,dpr=1, pts=[], pairs=[], t0=performance.now();
-  function seed(){
-    pts=[];var n=150,i,u,v,r;
-    for(i=0;i<n;i++){u=Math.random()*2-1;v=Math.random()*Math.PI*2;r=i<110?1:0.35+Math.random()*0.5;
-      var s=Math.sqrt(1-u*u);pts.push({x:s*Math.cos(v)*r,y:u*r,z:s*Math.sin(v)*r,hot:Math.random()<0.06,ph:Math.random()*6.28})}
-    pairs=[];for(i=0;i<n;i++)for(var j=i+1;j<n;j++){var a=pts[i],b=pts[j],d=(a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z);if(d<0.085)pairs.push([i,j])}
+  /* ---------- ticker: live agent names + facts, duplicated for a seamless loop ---------- */
+  var track=document.getElementById('track'), facts=track.innerHTML;
+  function fillTrack(names){var html=names.map(function(n){var s=document.createElement('span'),b=document.createElement('b');b.textContent=n.name;s.appendChild(b);s.appendChild(document.createTextNode(' agent #'+n.id+' registered'));return s.outerHTML}).join('')+facts;
+    track.innerHTML=html+html}
+  fillTrack([]);
+
+  /* ---------- registration JSON types itself when scrolled into view ---------- */
+  var JSON_TOK=[['p','{\n  '],['k','"type"'],['p',': '],['s','"https://eips.ethereum.org/EIPS/eip-8004#registration-v1"'],['p',',\n  '],
+    ['k','"name"'],['p',': '],['s','"Atlas Research"'],['p',',\n  '],
+    ['k','"description"'],['p',': '],['s','"Reads filings for tokenized stocks and returns a cited brief."'],['p',',\n  '],
+    ['k','"image"'],['p',': '],['s','"data:image/webp;base64,UklGR…"'],['p',',\n  '],
+    ['k','"services"'],['p',': [\n    { '],['k','"name"'],['p',': '],['s','"web"'],['p',', '],['k','"endpoint"'],['p',': '],['s','"https://atlas.example"'],['p',' },\n    { '],
+    ['k','"name"'],['p',': '],['s','"MCP"'],['p',', '],['k','"endpoint"'],['p',': '],['s','"https://atlas.example/mcp"'],['p',' }\n  ],\n  '],
+    ['k','"x402Support"'],['p',': '],['b','true'],['p',',\n  '],['k','"active"'],['p',': '],['b','true'],['p','\n}']];
+  var pre=document.getElementById('json');
+  function typeJSON(){
+    var spans=JSON_TOK.map(function(t){var s=document.createElement('span');s.className=t[0];pre.appendChild(s);return s});
+    var caret=document.createElement('span');caret.className='caret';pre.appendChild(caret);
+    if(reduce){JSON_TOK.forEach(function(t,i){spans[i].textContent=t[1]});return}
+    var ti=0,ci=0;(function step(){for(var n=0;n<3&&ti<JSON_TOK.length;n++){spans[ti].textContent=JSON_TOK[ti][1].slice(0,++ci);if(ci>=JSON_TOK[ti][1].length){ti++;ci=0}}
+      if(ti<JSON_TOK.length)setTimeout(step,16)})();
   }
-  function size(){dpr=Math.min(2,window.devicePixelRatio||1);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
-  function frame(now){
-    if(screen.classList.contains('has-video'))return;
-    var t=(now-t0)/1000, phone=W<600, tab=!phone&&W<1024&&H>W;
-    var ocx=phone?W*0.72:tab?W*0.7:W*0.7, ocy=phone?H*0.2:tab?H*0.26:H*0.46, R=phone?W*0.42:tab?W*0.36:Math.min(W*0.26,H*0.52);
-    var ay=t*0.06, ax=0.38+Math.sin(t*0.05)*0.08, ca=Math.cos(ay),sa=Math.sin(ay),cb=Math.cos(ax),sb=Math.sin(ax);
-    cx.clearRect(0,0,W,H);
-    var P=pts.map(function(p){var x=p.x*ca-p.z*sa,z=p.x*sa+p.z*ca,y=p.y*cb-z*sb;z=p.y*sb+z*cb;var k=2.6/(2.6+z);return{x:ocx+x*R*k,y:ocy+y*R*k,z:z,k:k}});
-    cx.lineWidth=1;
-    pairs.forEach(function(q){var a=P[q[0]],b=P[q[1]],al=0.05+0.13*(1-(a.z+b.z+2)/4);cx.strokeStyle='rgba(255,255,255,'+al.toFixed(3)+')';cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.stroke()});
-    P.forEach(function(p,i){var o=pts[i],front=1-(p.z+1)/2;
-      if(o.hot){var pu=0.5+0.5*Math.sin(t*1.6+o.ph);cx.fillStyle='rgba(200,27,28,'+(0.55+0.45*pu).toFixed(3)+')';var s=3.4*p.k;cx.fillRect(p.x-s/2,p.y-s/2,s,s);
-        cx.strokeStyle='rgba(200,27,28,'+(0.35*(1-pu)).toFixed(3)+')';var rr=s+10*pu;cx.strokeRect(p.x-rr/2,p.y-rr/2,rr,rr)}
-      else{cx.fillStyle='rgba(255,255,255,'+(0.18+0.55*front).toFixed(3)+')';var s2=1.6*p.k;cx.fillRect(p.x-s2/2,p.y-s2/2,s2,s2)}});
-    if(!reduce)requestAnimationFrame(frame);
+  if('IntersectionObserver' in window){var jo=new IntersectionObserver(function(es){if(es[0].isIntersecting){jo.disconnect();typeJSON()}},{threshold:.3});jo.observe(pre)}else typeJSON();
+
+  /* ---------- faq ---------- */
+  [].slice.call(document.querySelectorAll('.qa button')).forEach(function(b){b.addEventListener('click',function(){
+    var qa=b.parentNode,open=!qa.classList.contains('open');qa.classList.toggle('open',open);b.setAttribute('aria-expanded',String(open))})});
+
+  /* ---------- feature cards follow the cursor ---------- */
+  [].slice.call(document.querySelectorAll('.feat')).forEach(function(f){f.addEventListener('pointermove',function(e){var r=f.getBoundingClientRect();f.style.setProperty('--fx',(e.clientX-r.left)+'px');f.style.setProperty('--fy',(e.clientY-r.top)+'px')})});
+
+  /* ---------- cursor spotlight (mouse only) ---------- */
+  var spot=document.getElementById('spot');
+  if(!reduce&&matchMedia('(hover:hover) and (pointer:fine)').matches){
+    addEventListener('pointermove',function(e){spot.style.setProperty('--mx',e.clientX+'px');spot.style.setProperty('--my',e.clientY+'px');spot.classList.add('on')},{passive:true});
+    document.addEventListener('pointerleave',function(){spot.classList.remove('on')});
   }
-  seed();size();addEventListener('resize',size);requestAnimationFrame(frame);
 
   /* ---------- desktop dropdowns ---------- */
   var dds=[].slice.call(document.querySelectorAll('nav [data-dd]'));
   function closeDD(except){dds.forEach(function(b){if(b!==except){b.setAttribute('aria-expanded','false');document.getElementById(b.dataset.dd).classList.remove('open')}})}
-  dds.forEach(function(b){b.addEventListener('click',function(e){
+  dds.forEach(function(b){b.addEventListener('click',function(){
     var open=b.getAttribute('aria-expanded')!=='true';closeDD(b);
     b.setAttribute('aria-expanded',String(open));document.getElementById(b.dataset.dd).classList.toggle('open',open)})});
   document.addEventListener('click',function(e){if(!e.target.closest('nav'))closeDD()});
 
   /* ---------- mobile menu ---------- */
   var burger=document.getElementById('burger'), menu=document.getElementById('menu');
-  function setMenu(open){body.classList.toggle('nav-open',open);burger.setAttribute('aria-expanded',String(open));
-    burger.setAttribute('aria-label',open?'Close menu':'Open menu');menu.setAttribute('aria-hidden',String(!open))}
+  function setMenu(open){body.classList.toggle('nav-open',open);burger.setAttribute('aria-expanded',String(open));burger.setAttribute('aria-label',open?'Close menu':'Open menu')}
   burger.addEventListener('click',function(){setMenu(!body.classList.contains('nav-open'))});
   var accs=[].slice.call(document.querySelectorAll('[data-acc]'));
   accs.forEach(function(b){b.addEventListener('click',function(){var open=b.getAttribute('aria-expanded')!=='true';
@@ -369,46 +493,16 @@ html.intro h1 .ln>span{transform:translateY(120%)}
     b.setAttribute('aria-expanded',String(open));document.getElementById(b.dataset.acc).classList.toggle('open',open)})});
   menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){setMenu(false)})});
   addEventListener('keydown',function(e){if(e.key==='Escape'){setMenu(false);closeDD()}});
-  addEventListener('resize',function(){if(innerWidth>1023)setMenu(false)});
 
-  /* ---------- entrance timeline ---------- */
-  if(root.classList.contains('intro')){
-    var started=false;
-    function measure(){var p=document.createElement('div');p.style.cssText='position:absolute;visibility:hidden;width:calc(100 * var(--s))';body.appendChild(p);var w=p.getBoundingClientRect().width/100;p.remove();return w||1}
-    function run(){
-      if(started)return;started=true;
-      var s=measure(), k=innerWidth<600?0.86:1, anims=[];
-      var EXPO='cubic-bezier(.16,1,.3,1)',QUINT='cubic-bezier(.22,1,.36,1)',QUART='cubic-bezier(.25,1,.5,1)',TYPE='cubic-bezier(.22,.85,.24,1)';
-      function A(el,kf,t,d,e){if(!el)return;anims.push(el.animate(kf,{delay:t*1000*k,duration:d*1000*k,easing:e,fill:'both'}))}
-      function Q(sel){return [].slice.call(document.querySelectorAll(sel))}
-      function rise(px){return [{opacity:0,transform:'translateY('+px*s+'px)'},{opacity:1,transform:'none'}]}
-      A(document.querySelector('.logo'),[{opacity:0,transform:'scale(.9)'},{opacity:1,transform:'scale(1)'}],0,.70,EXPO);
-      A(document.querySelector('.wordmark'),[{opacity:0},{opacity:1}],0.08,.70,EXPO);
-      Q('nav>*').forEach(function(el,i){A(el,rise(7),0.12+i*0.055,.62,QUINT)});
-      A(burger,[{opacity:0},{opacity:1}],0.18,.55,QUART);
-      var wipe=[{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0% 0 0)'}];
-      A(document.querySelector('.btn-top'),wipe,0.28,.66,EXPO);
-      Q('h1 .ln>span').forEach(function(el,i){A(el,[{transform:'translateY(120%)'},{transform:'translateY(0)'}],0.34+i*0.09,.98,TYPE)});
-      A(document.querySelector('.sub'),rise(14),0.74,.72,QUINT);
-      A(document.querySelector('.btn-cta'),wipe,0.90,.70,EXPO);
-      Q('.rule').forEach(function(el,i){A(el,[{transform:'scaleY(0)'},{transform:'scaleY(1)'}],0.98+i*0.07,.60,QUART)});
-      Q('.st .num').forEach(function(el,i){A(el,rise(12),1.04+i*0.085,.66,QUINT)});
-      Q('.st .lab').forEach(function(el,i){A(el,rise(10),1.10+i*0.085,.62,QUINT)});
-      var done=false;function finish(){if(done)return;done=true;root.classList.remove('intro');anims.forEach(function(a){try{a.cancel()}catch(e){}})}
-      Promise.all(anims.map(function(a){return a.finished})).then(finish,finish);
-      setTimeout(finish,4000);
-    }
-    var go=function(){requestAnimationFrame(run);setTimeout(run,1200)};
-    var fr=document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve();
-    Promise.race([fr,new Promise(function(r){setTimeout(r,1000)})]).then(go);
-  }
-
-  /* ---------- live agent count from the Identity Registry ---------- */
+  /* ---------- registry reads ---------- */
   var RPCS=['https://rpc.mainnet.chain.robinhood.com','https://robinhood.drpc.org'];
   var REG='0x8004A169FB4a3325136EB29fA0ceB6D2e539a432';
+  var SEL={tokenURI:'0xc87b56dd',ownerOf:'0x6352211e'};
   function word(n){return BigInt(n).toString(16).padStart(64,'0')}
-  function call(url,data){return fetch(url,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_call',params:[{to:REG,data:data},'latest']})}).then(function(r){return r.json()})}
-  function exists(url,id){return call(url,'0x6352211e'+word(id)).then(function(j){return !!(j.result&&j.result.length>=66&&!/^0x0*$/.test(j.result))})}
+  function post(url,payload){var c=new AbortController();setTimeout(function(){c.abort()},12000);
+    return fetch(url,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload),signal:c.signal}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})}
+  function q(url,id,data){return {jsonrpc:'2.0',id:id,method:'eth_call',params:[{to:REG,data:data},'latest']}}
+  function exists(url,id){return post(url,q(url,1,SEL.ownerOf+word(id))).then(function(j){return !!(j.result&&j.result.length>=66&&!/^0x0*$/.test(j.result))})}
   function firstMissing(url,lo){var step=1;
     function bs(a,b){if(b-a<=1)return Promise.resolve(b);var m=Math.floor((a+b)/2);return exists(url,m).then(function(e){return e?bs(m,b):bs(a,m)})}
     function up(){var hi=lo+step;return exists(url,hi).then(function(e){if(e&&step<1e9){lo=hi;step*=2;return up()}return bs(lo,hi)})}
@@ -418,16 +512,61 @@ html.intro h1 .ln>span{transform:translateY(120%)}
     var start=hint>0?exists(url,hint-1).then(function(e){return e?hint-1:null}):Promise.resolve(null);
     return start.then(function(lo){if(lo!=null)return firstMissing(url,lo);return exists(url,0).then(function(any){return any?firstMissing(url,0):0})});
   }
-  function showCount(n){
-    document.getElementById('liveNum').innerHTML='<span class="live-dot"></span>'+n.toLocaleString('en-US');
-    document.getElementById('liveLab').textContent='Agents on chain';
+  function decString(hex){hex=(hex||'').replace(/^0x/,'');if(hex.length<128)return '';var off=parseInt(hex.slice(0,64),16)*2,len=parseInt(hex.slice(off,off+64),16),d=hex.slice(off+64,off+64+len*2),u=new Uint8Array(len);for(var i=0;i<len;i++)u[i]=parseInt(d.substr(i*2,2),16);return new TextDecoder().decode(u)}
+  function unb64utf8(b){var bin=atob(b),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u)}
+  function loadMeta(uri){
+    if(!uri)return Promise.resolve(null);
+    try{
+      var m=/^data:application\/json(;[^,]*)?,(.*)$/s.exec(uri);
+      if(m){var isB64=/;base64/i.test(m[1]||'');return Promise.resolve(JSON.parse(isB64?unb64utf8(m[2]):decodeURIComponent(m[2])))}
+      var url=uri.replace(/^ipfs:\/\//,'https://ipfs.io/ipfs/');if(!/^https:\/\//.test(url))return Promise.resolve(null);
+      var c=new AbortController();setTimeout(function(){c.abort()},5000);
+      return fetch(url,{signal:c.signal}).then(function(r){return r.ok?r.json():null}).catch(function(){return null});
+    }catch(e){return Promise.resolve(null)}
   }
-  var hint=0;
-  try{hint=+localStorage.getItem('charter.count')||0;if(!hint){var c=JSON.parse(localStorage.getItem('charter.registry.v1')||'null');hint=c&&c.count||0}}catch(e){}
+  function safeImg(src){if(typeof src!=='string')return null;src=src.trim();
+    if(/^data:image\/(png|jpe?g|webp|gif|avif);base64,[A-Za-z0-9+/=]+$/.test(src))return src;
+    if(/^ipfs:\/\//.test(src))return src.replace(/^ipfs:\/\//,'https://ipfs.io/ipfs/');
+    if(/^https:\/\//.test(src))return src;return null}
+  function named(a){var m=a&&a.meta;return !!(m&&typeof m.name==='string'&&m.name.trim())}
+
+  /* ---------- live count + latest agents ---------- */
+  function h(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+  var shownN=0,countRaf=0;
+  function showCount(n){ // counts up from the value on screen
+    var el=document.getElementById('liveNum');document.getElementById('liveLab').textContent='Agents on chain';
+    var from=shownN,t0=performance.now(),dur=reduce||from===n?0:(from?600:1400);cancelAnimationFrame(countRaf);
+    (function tick(now){var p=dur?Math.min(1,(now-t0)/dur):1,e=1-Math.pow(1-p,4),v=Math.round(from+(n-from)*e);
+      el.innerHTML='<span class="live-dot"></span>'+v.toLocaleString('en-US');if(p<1)countRaf=requestAnimationFrame(tick)})(t0);
+    shownN=n}
+  function renderFeed(list){var F=document.getElementById('feed');F.innerHTML='';
+    list.slice(0,5).forEach(function(a,k){var m=a.meta,name=m.name.trim();
+      var row=h('a','frow'+(k===0?' new':''));row.href='app.html#agent-'+a.id;row.style.setProperty('--i',k);
+      var av=h('div','av'),src=safeImg(m.image);
+      if(src){var im=document.createElement('img');im.alt='';im.loading='lazy';im.referrerPolicy='no-referrer';im.onerror=function(){av.textContent=name.charAt(0).toUpperCase()};im.src=src;av.appendChild(im)}else av.textContent=name.charAt(0).toUpperCase();
+      var txt=h('div');txt.appendChild(h('h3',null,name));txt.appendChild(h('p',null,typeof m.description==='string'&&m.description.trim()?m.description:'No description'));
+      row.appendChild(h('span','id','#'+a.id));row.appendChild(av);row.appendChild(txt);F.appendChild(row)});
+    if(!list.length)F.appendChild(h('div','feed-note','Live registry data could not load right now.'));
+    else fillTrack(list.slice(0,10).map(function(a){return {id:a.id,name:a.meta.name.trim()}}));
+  }
+  var hint=0,cached=null;
+  try{hint=+localStorage.getItem('charter.count')||0;cached=JSON.parse(localStorage.getItem('charter.registry.v1')||'null');if(!hint&&cached)hint=cached.count||0}catch(e){}
   if(hint>0)showCount(hint);
-  (function tryRpc(i){if(i>=RPCS.length)return;count(RPCS[i],hint).then(function(n){
-    showCount(n);try{localStorage.setItem('charter.count',String(n))}catch(e){}
-  }).catch(function(){tryRpc(i+1)})})(0);
+  if(cached&&Array.isArray(cached.agents)){var c=cached.agents.filter(named);if(c.length)renderFeed(c)}
+
+  function latest(url,n){
+    var ids=[];for(var i=n-1;i>=0&&i>n-13;i--)ids.push(i);
+    return post(url,ids.map(function(id,k){return q(url,k+1,SEL.tokenURI+word(id))})).then(function(res){
+      var byId={};(Array.isArray(res)?res:[res]).forEach(function(r){byId[r.id]=r});
+      return Promise.all(ids.map(function(id,k){var r=byId[k+1];var uri=r&&r.result?decString(r.result):'';
+        return loadMeta(uri).then(function(meta){return {id:id,meta:meta}})}));
+    }).then(function(list){return list.filter(named)});
+  }
+  (function tryRpc(i){if(i>=RPCS.length){if(!document.querySelector('#feed .frow'))renderFeed([]);return}
+    count(RPCS[i],hint).then(function(n){
+      showCount(n);try{localStorage.setItem('charter.count',String(n))}catch(e){}
+      return latest(RPCS[i],n).then(function(list){if(list.length)renderFeed(list)});
+    }).catch(function(){tryRpc(i+1)})})(0);
 })();
 </script>
 </body>
