@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Charter AI</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#000000">
 <meta name="description" content="Charter AI registers ERC-8004 AI agents on Robinhood Chain. One minute, no code, verifiable by any app.">
 <meta property="og:title" content="Charter AI">
 <meta property="og:description" content="On-chain identity for AI agents on Robinhood Chain.">
@@ -91,7 +93,7 @@ h1 em{font-style:normal;color:var(--red)}
 @keyframes blink{50%{opacity:.25}}
 
 /* latest agents panel */
-.feed{border:1px solid var(--line2);background:rgba(10,10,10,.85)}
+.feed{border:1px solid var(--line2);background:rgba(8,8,8,.72)}
 .feed-hd{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid var(--line)}
 .feed-hd b{font:500 .8rem/1 var(--JB);letter-spacing:.14em;text-transform:uppercase}
 .feed-hd span{font-size:.8rem;color:var(--lab);white-space:nowrap}
@@ -235,6 +237,11 @@ h1 em::after{content:'';position:absolute;left:0;right:0;bottom:.02em;height:.07
 .spot{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .4s;
   background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(200,27,28,.10),transparent 70%)}
 .spot.on{opacity:1}
+#bgfx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block}
+.glow{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 45% 55% at 78% 32%,rgba(200,27,28,.16),transparent 70%),radial-gradient(ellipse 35% 40% at 10% 95%,rgba(200,27,28,.07),transparent 70%);
+  animation:breathe 9s ease-in-out infinite alternate}
+@keyframes breathe{from{opacity:.65}to{opacity:1}}
 
 /* feed rows stagger in; the newest gets a red sweep */
 .frow{animation:rowIn .6s cubic-bezier(.22,1,.36,1) both;animation-delay:calc(var(--i,0) * .08s);position:relative}
@@ -261,6 +268,8 @@ h1 em::after{content:'';position:absolute;left:0;right:0;bottom:.02em;height:.07
 </style>
 </head>
 <body>
+<div class="glow" aria-hidden="true"></div>
+<canvas id="bgfx" aria-hidden="true"></canvas>
 <div class="grid-bg" aria-hidden="true"></div>
 <div class="scan" aria-hidden="true"></div>
 <div class="spot" id="spot" aria-hidden="true"></div>
@@ -467,6 +476,46 @@ h1 em::after{content:'';position:absolute;left:0;right:0;bottom:.02em;height:.07
 
   /* ---------- feature cards follow the cursor ---------- */
   [].slice.call(document.querySelectorAll('.feat')).forEach(function(f){f.addEventListener('pointermove',function(e){var r=f.getBoundingClientRect();f.style.setProperty('--fx',(e.clientX-r.left)+'px');f.style.setProperty('--fy',(e.clientY-r.top)+'px')})});
+
+  /* ---------- background: rotating agent network, drawn at device pixel ratio ---------- */
+  (function(){
+    var cv=document.getElementById('bgfx'),cx=cv.getContext('2d'),W=0,H=0,dpr=1,pts=[],pairs=[],dust=[],t0=performance.now(),mx=0,my=0,tmx=0,tmy=0,raf=0;
+    function seed(){
+      var n=innerWidth<700?110:170,i;pts=[];
+      for(i=0;i<n;i++){var u=Math.random()*2-1,v=Math.random()*Math.PI*2,r=i<n*.75?1:.35+Math.random()*.5,s=Math.sqrt(1-u*u);
+        pts.push({x:s*Math.cos(v)*r,y:u*r,z:s*Math.sin(v)*r,hot:Math.random()<.06,ph:Math.random()*6.28})}
+      pairs=[];for(i=0;i<n;i++)for(var j=i+1;j<n;j++){var a=pts[i],b=pts[j],d=(a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z);if(d<.085)pairs.push([i,j])}
+      dust=[];for(i=0;i<60;i++)dust.push({x:Math.random(),y:Math.random(),s:.3+Math.random()*1.1,v:.004+Math.random()*.012})
+    }
+    function size(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cx.setTransform(dpr,0,0,dpr,0,0)}
+    function draw(now){
+      var t=(now-t0)/1000,phone=W<700,narrow=W<1024;
+      mx+=(tmx-mx)*.04;my+=(tmy-my)*.04;
+      var sc=Math.min(scrollY,H)*.35; // drifts up slower than the page
+      var ocx=phone?W*.78:narrow?W*.72:W*.74, ocy=(phone?H*.18:H*.42)-sc, R=phone?W*.5:narrow?W*.36:Math.min(W*.27,H*.5);
+      var ay=t*.07+mx*.35, ax=.38+Math.sin(t*.05)*.08+my*.2, ca=Math.cos(ay),sa=Math.sin(ay),cb=Math.cos(ax),sb=Math.sin(ax);
+      cx.clearRect(0,0,W,H);
+      // dust drifting up
+      dust.forEach(function(d){var y=((d.y-t*d.v)%1+1)%1;cx.fillStyle='rgba(255,255,255,'+(.08+d.s*.12).toFixed(3)+')';cx.fillRect(d.x*W,y*H,d.s,d.s)});
+      var P=pts.map(function(p){var x=p.x*ca-p.z*sa,z=p.x*sa+p.z*ca,y=p.y*cb-z*sb;z=p.y*sb+z*cb;var k=2.6/(2.6+z);return{x:ocx+x*R*k,y:ocy+y*R*k,z:z,k:k}});
+      cx.lineWidth=1;
+      pairs.forEach(function(q){var a=P[q[0]],b=P[q[1]],al=.04+.12*(1-(a.z+b.z+2)/4);cx.strokeStyle='rgba(255,255,255,'+al.toFixed(3)+')';cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.stroke()});
+      // a pulse travelling along a few edges, like a transaction moving through the network
+      for(var e=0;e<6;e++){var q=pairs[(Math.floor(t*.5)*7+e*31)%pairs.length];if(!q)break;var a=P[q[0]],b=P[q[1]],f=(t*.5)%1;
+        cx.strokeStyle='rgba(200,27,28,'+(.7*(1-f)).toFixed(3)+')';cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(a.x+(b.x-a.x)*f,a.y+(b.y-a.y)*f);cx.stroke()}
+      P.forEach(function(p,i){var o=pts[i],front=1-(p.z+1)/2;
+        if(o.hot){var pu=.5+.5*Math.sin(t*1.6+o.ph),s=3.4*p.k;cx.fillStyle='rgba(200,27,28,'+(.55+.45*pu).toFixed(3)+')';cx.fillRect(p.x-s/2,p.y-s/2,s,s);
+          var rr=s+10*pu;cx.strokeStyle='rgba(200,27,28,'+(.35*(1-pu)).toFixed(3)+')';cx.strokeRect(p.x-rr/2,p.y-rr/2,rr,rr)}
+        else{var s2=1.7*p.k;cx.fillStyle='rgba(255,255,255,'+(.15+.5*front).toFixed(3)+')';cx.fillRect(p.x-s2/2,p.y-s2/2,s2,s2)}});
+      if(!reduce&&!document.hidden)raf=requestAnimationFrame(draw);
+    }
+    seed();size();
+    addEventListener('resize',function(){size();if(reduce)draw(performance.now())});
+    addEventListener('pointermove',function(e){tmx=e.clientX/innerWidth-.5;tmy=e.clientY/innerHeight-.5},{passive:true});
+    if(reduce)addEventListener('scroll',function(){draw(performance.now())},{passive:true});
+    document.addEventListener('visibilitychange',function(){if(!document.hidden&&!reduce){cancelAnimationFrame(raf);raf=requestAnimationFrame(draw)}});
+    raf=requestAnimationFrame(draw);
+  })();
 
   /* ---------- cursor spotlight (mouse only) ---------- */
   var spot=document.getElementById('spot');
