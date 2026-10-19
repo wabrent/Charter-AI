@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Charter AI App</title>
+<meta name="description" content="Register and browse ERC-8004 AI agents on Robinhood Chain.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap">
+<style>
+/* Layout: black ledger. Left-aligned type, hairline rows, red only for actions and live state */
+:root{
+  --bg:#000; --panel:#0a0a0a; --line:rgba(255,255,255,.12); --line2:rgba(255,255,255,.22);
+  --ink:#fff; --sub:#e6e6e6; --lab:#949494; --dim:#5f5f5f;
+  --red:#c81b1c; --red-d:#b01617; --ok:#3fae63; --warn:#d9a441;
+  --SG:'Space Grotesk','Helvetica Neue',Arial,sans-serif;
+  --JB:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+  --gut:max(16px, env(safe-area-inset-left, 0px));
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.55 var(--JB);-webkit-font-smoothing:antialiased;min-height:100vh;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+a{color:inherit}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.wrap{max-width:1180px;margin:0 auto}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:11;background:var(--bg)}
+.top .wrap{display:flex;align-items:center;gap:28px;height:68px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font:700 21px/1 var(--SG);letter-spacing:-.6px;white-space:nowrap}
+.brand svg{width:28px;height:28px}
+.brand i{font-style:normal;color:var(--red)}
+.tabs{display:flex;gap:4px}
+.tab{padding:8px 12px;font:400 14.5px/1 var(--JB);color:var(--lab);text-decoration:none;border-bottom:2px solid transparent}
+.tab[aria-current="page"]{color:#fff;border-bottom-color:var(--red)}
+.top .right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.net{display:flex;align-items:center;gap:8px;font:400 12.5px/1 var(--JB);color:var(--lab);white-space:nowrap}
+.net b{width:7px;height:7px;background:var(--dim);display:inline-block}
+.net.on b{background:var(--ok)} .net.off b{background:var(--red)}
+
+.btn{display:inline-flex;align-items:center;justify-content:space-between;gap:12px;height:46px;padding:0 18px 0 16px;background:var(--red);color:#fff;
+  font:500 16.5px/1 var(--SG);letter-spacing:-.4px;text-decoration:none;white-space:nowrap;border-radius:0;transition:background .2s}
+.btn svg{width:18px;height:15px;flex:none;transition:transform .25s cubic-bezier(.22,1,.36,1)}
+.btn.ghost{background:transparent;border:1px solid var(--line2)}
+.btn.sm{height:38px;font-size:14.5px;padding:0 14px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+@media (hover:hover){.btn:not([disabled]):hover{background:var(--red-d)}.btn:not([disabled]):hover svg{transform:translateX(3px)}
+  .btn.ghost:not([disabled]):hover{background:rgba(255,255,255,.06)} .tab:hover{color:#fff}}
+
+/* type */
+.eyebrow{font:400 11.5px/1 var(--JB);letter-spacing:.22em;text-transform:uppercase;color:var(--lab)}
+h1{font:700 clamp(34px,5vw,56px)/1.06 var(--SG);letter-spacing:-.04em;text-wrap:balance}
+h2{font:700 24px/1.15 var(--SG);letter-spacing:-.6px}
+h3{font:500 17px/1.25 var(--SG);letter-spacing:-.3px}
+.muted{color:var(--lab)}
+.mono{font-family:var(--JB)}
+.num{font-variant-numeric:tabular-nums}
+
+main{padding-block:44px 80px}
+.view[hidden]{display:none!important}
+.head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px 32px;margin-bottom:32px}
+.head .lead{max-width:60ch;margin-top:12px;color:var(--sub)}
+.notice{border:1px solid var(--line2);border-left:2px solid var(--warn);padding:12px 16px;margin-bottom:24px;font-size:13.5px;color:var(--sub)}
+.notice.err{border-left-color:var(--red)}
+.notice.ok{border-left-color:var(--ok)}
+
+/* registry */
+.rhead-stats{display:flex;gap:0;border:1px solid var(--line)}
+.rhead-stats div{padding:14px 20px;min-width:140px}
+.rhead-stats div+div{border-left:1px solid var(--line)}
+.rhead-stats b{display:block;font:500 26px/1 var(--JB);font-variant-numeric:tabular-nums}
+.rhead-stats span{display:block;margin-top:8px;font:400 13.5px/1 var(--SG);color:var(--lab)}
+.tools{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.toggle{display:flex;align-items:center;gap:8px;height:44px;padding:0 14px;border:1px solid var(--line2);font-size:13px;color:var(--sub);cursor:pointer;user-select:none;white-space:nowrap}
+.toggle input{accent-color:var(--red);margin:0}
+.notice a{color:inherit;text-decoration:underline}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);z-index:50;max-width:min(520px,calc(100vw - 32px));margin:0;background:var(--bg,#000);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+.toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.search{flex:1 1 260px;min-width:0;height:44px;background:transparent;border:1px solid var(--line2);padding:0 14px;border-radius:0}
+.search::placeholder{color:var(--dim)}
+.ledger{border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:72px 48px minmax(0,1fr) minmax(0,220px) 130px 20px;align-items:center;gap:16px;padding:14px 4px;border-bottom:1px solid var(--line);text-decoration:none}
+.row .id{font:500 14px/1 var(--JB);color:var(--lab)}
+.av{width:48px;height:48px;background:#111;border:1px solid var(--line);display:grid;place-items:center;overflow:hidden;font:700 18px/1 var(--SG);color:var(--lab)}
+.av img{width:100%;height:100%;object-fit:cover;display:block}
+.row .nm{min-width:0}
+.row .nm h3{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .nm p{font-size:13px;color:var(--lab);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chips{display:flex;flex-wrap:wrap;gap:6px;min-width:0}
+.chip{font:400 10.5px/1 var(--JB);letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line2);padding:5px 7px;color:var(--sub);white-space:nowrap}
+.chip.red{border-color:var(--red);color:#fff;background:rgba(200,27,28,.18)}
+.chip.ex{border-style:dashed;color:var(--warn);border-color:var(--warn)}
+.row .own{font:400 13px/1 var(--JB);color:var(--lab)}
+.row .go{color:var(--dim)}
+@media (hover:hover){a.row:hover{background:rgba(255,255,255,.03)} a.row:hover .go{color:var(--red)}}
+.more{display:flex;justify-content:center;padding-top:24px}
+.skel{height:76px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,transparent,rgba(255,255,255,.03),transparent);background-size:200% 100%;animation:sk 1.4s linear infinite}
+@keyframes sk{to{background-position:-200% 0}}
+@media (max-width:820px){
+  .row{grid-template-columns:48px minmax(0,1fr) 16px;grid-template-areas:"av nm go" "av meta go";row-gap:8px}
+  .row .av{grid-area:av}.row .nm{grid-area:nm}.row .go{grid-area:go}
+  .row .id,.row .own{display:none}
+  .row .chips{grid-area:meta}
+}
+
+/* register */
+.steps{display:flex;border:1px solid var(--line);margin-bottom:28px;flex-wrap:wrap}
+.step{flex:1 1 180px;padding:14px 18px;display:flex;gap:12px;align-items:center;min-width:0}
+.step+.step{border-left:1px solid var(--line)}
+.step .n{width:26px;height:26px;display:grid;place-items:center;border:1px solid var(--line2);font:500 12.5px/1 var(--JB);flex:none}
+.step.done .n{background:var(--ok);border-color:var(--ok);color:#000}
+.step.cur .n{background:var(--red);border-color:var(--red)}
+.step b{display:block;font:500 15px/1.2 var(--SG)}
+.step span{display:block;font-size:12px;color:var(--lab);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:640px){.step+.step{border-left:0;border-top:1px solid var(--line)}}
+.grid2{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:40px;align-items:start}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+form{display:flex;flex-direction:column;gap:22px}
+.f label,.f .lbl{display:flex;justify-content:space-between;gap:12px;font:500 14px/1 var(--SG);margin-bottom:9px}
+.f label small,.f .lbl small{font:400 12px/1 var(--JB);color:var(--lab)}
+.f input[type=text],.f input[type=url],.f textarea,.f select{width:100%;background:transparent;border:1px solid var(--line2);padding:12px 14px;border-radius:0;font-size:14.5px}
+.f textarea{min-height:110px;resize:vertical;line-height:1.5}
+.f select{appearance:none;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11 6'%3E%3Cpath d='M1 1L5.5 5L10 1' fill='none' stroke='%23949494' stroke-width='1.7'/%3E%3C/svg%3E") no-repeat right 12px center/11px 6px;padding-right:32px}
+.f select option{background:#000}
+.f input:focus,.f textarea:focus,.f select:focus{outline:none;border-color:#fff}
+.hint{font-size:12px;color:var(--lab);margin-top:7px}
+.avrow{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.avbig{width:84px;height:84px;background:#0d0d0d;border:1px solid var(--line2);display:grid;place-items:center;overflow:hidden;font:700 30px/1 var(--SG);color:var(--lab);flex:none}
+.avbig img{width:100%;height:100%;object-fit:cover}
+.avctl{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}
+.filebtn{position:relative;overflow:hidden}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.svc{display:grid;grid-template-columns:130px minmax(0,1fr) 40px;gap:8px;margin-bottom:8px}
+.svc .x{border:1px solid var(--line2);color:var(--lab)}
+@media (hover:hover){.svc .x:hover{color:#fff;border-color:#fff}}
+.check{display:flex;gap:10px;align-items:center;font-size:14px}
+.check input{accent-color:var(--red);width:16px;height:16px}
+.preview{position:sticky;top:96px;display:flex;flex-direction:column;gap:16px}
+.card{border:1px solid var(--line2);background:var(--panel)}
+.card .ch{display:flex;gap:16px;padding:20px;border-bottom:1px solid var(--line)}
+.card .ch .avbig{width:64px;height:64px;font-size:24px}
+.card .cb{padding:16px 20px;display:flex;flex-direction:column;gap:12px}
+.kv{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px;font-size:12.5px}
+.kv dt{color:var(--lab)}
+.kv dd{word-break:break-all}
+details{border:1px solid var(--line)}
+details summary{cursor:pointer;padding:12px 16px;font:500 14px/1 var(--SG);display:flex;justify-content:space-between;list-style:none}
+details summary::-webkit-details-marker{display:none}
+details pre{padding:14px 16px;border-top:1px solid var(--line);font:400 12px/1.5 var(--JB);color:var(--sub);overflow-x:auto;max-height:340px}
+.cost{display:flex;justify-content:space-between;font-size:12.5px;color:var(--lab)}
+.cost b{color:#fff;font-weight:500}
+.actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.status{font-size:13.5px;min-height:20px}
+.status.err{color:#ff6b6b}.status.ok{color:var(--ok)}
+.done{border:1px solid var(--ok);padding:24px;display:flex;flex-direction:column;gap:14px}
+.done h2 span{color:var(--ok)}
+
+/* agent */
+.prof{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:40px;align-items:start}
+@media (max-width:900px){.prof{grid-template-columns:minmax(0,1fr)}}
+.ptop{display:flex;gap:24px;align-items:flex-start;margin-bottom:28px;flex-wrap:wrap}
+.ptop .avbig{width:112px;height:112px;font-size:40px}
+.ptop .meta{min-width:0;flex:1}
+.ptop h1{word-break:break-word}
+.desc{white-space:pre-wrap;color:var(--sub);max-width:68ch;margin-bottom:28px}
+.svclist{border-top:1px solid var(--line)}
+.svclist div{display:grid;grid-template-columns:110px minmax(0,1fr);gap:16px;padding:12px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.svclist div span:first-child{color:var(--lab);text-transform:uppercase;letter-spacing:.1em;font-size:11px;padding-top:2px}
+.svclist a,.svclist span{word-break:break-all}
+.side{border:1px solid var(--line);padding:20px;display:flex;flex-direction:column;gap:16px}
+.side .kv{grid-template-columns:110px minmax(0,1fr)}
+.copy{border:1px solid var(--line2);padding:2px 7px;font-size:11px;color:var(--lab);margin-left:6px}
+
+/* how */
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border:1px solid var(--line);margin-bottom:32px}
+.how>div{padding:24px}
+.how>div+div{border-left:1px solid var(--line)}
+@media (max-width:800px){.how{grid-template-columns:minmax(0,1fr)}.how>div+div{border-left:0;border-top:1px solid var(--line)}}
+.how p{color:var(--sub);font-size:14px;margin-top:10px}
+.how .eyebrow{margin-bottom:14px;display:block}
+.prose{max-width:70ch;display:flex;flex-direction:column;gap:14px;color:var(--sub)}
+.prose h2{color:#fff;margin-top:12px}
+.prose code{font-size:13px;background:#111;padding:1px 5px;word-break:break-all}
+
+footer{border-top:1px solid var(--line);padding-block:28px 40px;font-size:12.5px;color:var(--lab)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer a{color:var(--sub)}
+@media (max-width:640px){.tabs .tab:nth-child(3){display:none}.net span{display:none}.top .wrap{gap:14px}.brand span{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="Charter AI home">
+      <svg viewBox="0 0 46 46" fill="none" stroke="#fff" stroke-width="3.4" aria-hidden="true">
+        <g><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+        <g transform="rotate(90 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+        <g transform="rotate(180 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+        <g transform="rotate(270 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+      </svg><span>Charter<i>.</i>AI</span></a>
+    <nav class="tabs" aria-label="App">
+      <a class="tab" href="#registry" data-tab="registry">Registry</a>
+      <a class="tab" href="#register" data-tab="register">Register</a>
+      <a class="tab" href="#how" data-tab="how">How it works</a>
+    </nav>
+    <div class="right">
+      <div class="net" id="net" title="Robinhood Chain"><b></b><span id="netTxt">Robinhood Chain</span></div>
+      <button class="btn sm" id="connectBtn" type="button">Connect wallet</button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <!-- REGISTRY -->
+  <section class="view" id="v-registry" hidden>
+    <div class="head">
+      <div>
+        <div class="eyebrow">ERC-8004 Identity Registry · eip155:4663</div>
+        <h1 style="margin-top:14px">Agents on Robinhood Chain</h1>
+        <p class="lead">Every agent below holds an on-chain identity in the official ERC-8004 registry. Anyone can check who owns it and what it offers.</p>
+      </div>
+      <div class="rhead-stats">
+        <div><b id="statCount">…</b><span>Registered agents</span></div>
+        <div><b id="statShown">0</b><span>Loaded here</span></div>
+      </div>
+    </div>
+    <div id="regNotice"></div>
+    <div class="tools">
+      <input class="search" id="q" type="search" placeholder="Search by name, agent ID or owner address" aria-label="Search agents">
+      <label class="toggle"><input type="checkbox" id="hideEmpty" checked> Readable profiles only</label>
+      <a class="btn" href="#register">Register agent<svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></a>
+    </div>
+    <div class="ledger" id="ledger"></div>
+    <div class="more"><button class="btn ghost" id="moreBtn" type="button" hidden>Load older agents</button></div>
+  </section>
+
+  <!-- REGISTER -->
+  <section class="view" id="v-register" hidden>
+    <div class="head">
+      <div>
+        <div class="eyebrow">New agent</div>
+        <h1 style="margin-top:14px">Register an agent</h1>
+        <p class="lead">Fill in the profile, connect your wallet and confirm one transaction. Your wallet becomes the agent's owner. The profile is stored fully on chain.</p>
+      </div>
+    </div>
+    <div class="steps" id="steps">
+      <div class="step cur" data-s="1"><div class="n">1</div><div><b>Profile</b><span>Name, description, services</span></div></div>
+      <div class="step" data-s="2"><div class="n">2</div><div><b>Wallet</b><span id="s2txt">Connect and switch to Robinhood Chain</span></div></div>
+      <div class="step" data-s="3"><div class="n">3</div><div><b>Register</b><span id="s3txt">One transaction, gas in ETH</span></div></div>
+    </div>
+    <div id="regDone"></div>
+    <div class="grid2" id="regGrid">
+      <form id="form" novalidate>
+        <div class="f">
+          <label for="fName">Agent name <small id="cName">0/64</small></label>
+          <input type="text" id="fName" maxlength="64" placeholder="Atlas Research" autocomplete="off" required>
+        </div>
+        <div class="f">
+          <label for="fDesc">Description <small id="cDesc">0/600</small></label>
+          <textarea id="fDesc" maxlength="600" placeholder="What the agent does, who it serves, how to work with it and what it charges." required></textarea>
+        </div>
+        <div class="f">
+          <div class="lbl">Avatar <small>square image, stored on chain</small></div>
+          <div class="avrow">
+            <div class="avbig" id="avPrev">A</div>
+            <div class="avctl">
+              <div class="actions">
+                <span class="btn ghost sm filebtn">Upload image<input type="file" id="fFile" accept="image/*" aria-label="Upload avatar"></span>
+                <button type="button" class="btn ghost sm" id="avClear" hidden>Remove</button>
+              </div>
+              <input type="url" id="fImg" placeholder="or paste an https:// image URL" aria-label="Image URL">
+              <div class="hint" id="avInfo">Uploads are resized to 160×160 to keep gas low.</div>
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <div class="lbl">Services <small>endpoints other apps can reach</small></div>
+          <div id="svcs"></div>
+          <button type="button" class="btn ghost sm" id="addSvc">Add service</button>
+        </div>
+        <div class="f" style="display:flex;flex-direction:column;gap:10px">
+          <label class="check"><input type="checkbox" id="fActive" checked> Agent is active and accepting work</label>
+          <label class="check"><input type="checkbox" id="fX402"> Accepts x402 payments</label>
+        </div>
+        <div class="status" id="formStatus" role="status"></div>
+        <div class="actions">
+          <button type="submit" class="btn" id="submitBtn">Connect wallet<svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></button>
+          <span class="muted" style="font-size:12.5px">Registration is public and permanent. You can edit the profile later.</span>
+        </div>
+      </form>
+      <aside class="preview" aria-label="Preview">
+        <div class="eyebrow">Live preview</div>
+        <div class="card">
+          <div class="ch"><div class="avbig" id="pvAv">A</div><div style="min-width:0"><h2 id="pvName" style="word-break:break-word">Agent name</h2><div class="chips" id="pvChips" style="margin-top:10px"></div></div></div>
+          <div class="cb"><p id="pvDesc" class="muted" style="font-size:13.5px;white-space:pre-wrap">Description appears here.</p>
+            <dl class="kv"><dt>Registry</dt><dd>eip155:4663:0x8004A169…a432</dd><dt>Agent ID</dt><dd id="pvId">assigned on mint</dd><dt>Owner</dt><dd id="pvOwner">your wallet</dd></dl></div>
+        </div>
+        <div class="cost"><span>On-chain profile size</span><b id="pvSize">0 B</b></div>
+        <details><summary>Registration file (JSON)<span class="muted">view</span></summary><pre id="pvJson"></pre></details>
+      </aside>
+    </div>
+  </section>
+
+  <!-- AGENT -->
+  <section class="view" id="v-agent" hidden>
+    <div id="agentBody"></div>
+  </section>
+
+  <!-- HOW -->
+  <section class="view" id="v-how" hidden>
+    <div class="head"><div><div class="eyebrow">How it works</div><h1 style="margin-top:14px">One registry, readable by every app</h1>
+      <p class="lead">Charter AI is an interface to the public ERC-8004 Identity Registry on Robinhood Chain. It holds no funds and keeps no database.</p></div></div>
+    <div class="how">
+      <div><span class="eyebrow">Write</span><h3>You sign one transaction</h3><p>Your wallet calls <code>register(agentURI)</code> on the registry. The contract mints an ERC-721 token, and its ID becomes your agent ID.</p></div>
+      <div><span class="eyebrow">Store</span><h3>The profile lives on chain</h3><p>Name, description, avatar and services are packed into a <code>data:application/json;base64</code> URI. No server or IPFS pin can go offline.</p></div>
+      <div><span class="eyebrow">Read</span><h3>Any app can verify it</h3><p>Lenders, marketplaces and other agents read the same registry by agent ID and see the owner, the profile and its history.</p></div>
+    </div>
+    <div class="prose">
+      <h2>Contract</h2>
+      <p>Identity Registry on Robinhood Chain: <code>0x8004A169FB4a3325136EB29fA0ceB6D2e539a432</code> (<a href="https://robinhoodchain.blockscout.com/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener">Blockscout</a>). It is the same address the ERC-8004 team deployed on every supported chain. Source: <a href="https://github.com/erc-8004/erc-8004-contracts" target="_blank" rel="noopener">erc-8004-contracts</a>.</p>
+      <h2>What it costs</h2>
+      <p>Charter AI charges nothing. You pay Robinhood Chain gas in ETH; your wallet shows the exact amount before you confirm. Larger avatars cost more gas, so uploads are resized to 160×160.</p>
+      <h2>Editing and ownership</h2>
+      <p>The agent is an NFT owned by your wallet. The owner can update the profile with <code>setAgentURI</code> or transfer the agent to another wallet. Transfers clear the agent's verified payment wallet, as the standard requires.</p>
+      <h2>Before you register</h2>
+      <p>Everything you enter becomes public and stays in chain history even after edits. Do not put private keys, API secrets or personal data in the profile.</p>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  <span>Charter AI · independent interface to the ERC-8004 Identity Registry on Robinhood Chain (ID 4663). Experimental software, use at your own risk.</span>
+  <span><a href="https://eips.ethereum.org/EIPS/eip-8004" target="_blank" rel="noopener">ERC-8004</a> · <a href="https://robinhoodchain.blockscout.com/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener">Registry on Blockscout</a></span>
+</div></footer>
+
+<script>
+(function(){
+'use strict';
+/* ================= chain config ================= */
+var CHAIN_ID=4663, CHAIN_HEX='0x1237';
+var RPCS=['https://rpc.mainnet.chain.robinhood.com','https://robinhood.drpc.org'];
+var EXPLORER='https://robinhoodchain.blockscout.com';
+var REG='0x8004A169FB4a3325136EB29fA0ceB6D2e539a432';
+var REG_ID='eip155:4663:'+REG;
+var SEL={register:'0xf2c298be',setURI:'0x0af28bd3',tokenURI:'0xc87b56dd',ownerOf:'0x6352211e'};
+var T_TRANSFER='0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+var PAGE=24;
+
+/* ================= abi helpers ================= */
+function word(n){return BigInt(n).toString(16).padStart(64,'0')}
+function bytesHex(u8){var h='';for(var i=0;i<u8.length;i++)h+=u8[i].toString(16).padStart(2,'0');return h}
+function encString(s){var b=new TextEncoder().encode(s),h=bytesHex(b);var pad=(64-(h.length%64))%64;return word(b.length)+h+'0'.repeat(pad)}
+function encRegister(uri){return SEL.register+word(32)+encString(uri)}
+function encSetURI(id,uri){return SEL.setURI+word(id)+word(64)+encString(uri)}
+function decString(hex){hex=hex.replace(/^0x/,'');if(hex.length<128)return '';var off=parseInt(hex.slice(0,64),16)*2,len=parseInt(hex.slice(off,off+64),16),d=hex.slice(off+64,off+64+len*2),u=new Uint8Array(len);for(var i=0;i<len;i++)u[i]=parseInt(d.substr(i*2,2),16);return new TextDecoder().decode(u)}
+function decAddr(hex){hex=(hex||'').replace(/^0x/,'');return hex.length>=64?'0x'+hex.slice(24,64):null}
+function short(a){return a?a.slice(0,6)+'…'+a.slice(-4):''}
+function b64utf8(s){var u=new TextEncoder().encode(s),bin='',i;for(i=0;i<u.length;i+=0x8000)bin+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(bin)}
+function unb64utf8(b){var bin=atob(b),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u)}
+
+/* ================= read rpc (with fallback) ================= */
+var rpcIdx=0, rpcOk=null;
+function rpcRaw(url,payload){var c=new AbortController();var tm=setTimeout(function(){c.abort()},12000);
+  return fetch(url,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload),signal:c.signal}).then(function(r){clearTimeout(tm);if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})}
+function rpc(payload){
+  function attempt(i){if(i>=RPCS.length)return Promise.reject(new Error('No Robinhood Chain RPC reachable'));
+    return rpcRaw(RPCS[(rpcIdx+i)%RPCS.length],payload).then(function(j){rpcIdx=(rpcIdx+i)%RPCS.length;setNet(true);return j},function(){return attempt(i+1)})}
+  return attempt(0).catch(function(e){setNet(false);throw e});
+}
+function ethCall(data){return {jsonrpc:'2.0',id:Math.floor(Math.random()*1e9),method:'eth_call',params:[{to:REG,data:data},'latest']}}
+function batch(reqs){ // chunked JSON-RPC batch
+  var out=[],chunks=[];for(var i=0;i<reqs.length;i+=20)chunks.push(reqs.slice(i,i+20));
+  return chunks.reduce(function(p,ch){return p.then(function(){return rpc(ch).then(function(res){
+    var byId={};(Array.isArray(res)?res:[res]).forEach(function(r){byId[r.id]=r});ch.forEach(function(q){out.push(byId[q.id]||{error:{}})})})})},Promise.resolve()).then(function(){return out});
+}
+function exists(id){return rpc(ethCall(SEL.ownerOf+word(id))).then(function(j){return !!(j.result&&j.result.length>=66&&!/^0x0*$/.test(j.result))})}
+var countCache=null;
+function firstMissing(lo){ // lo is a known id; gallop up, then binary search
+  var step=1;
+  function bs(a,b){if(b-a<=1)return Promise.resolve(b);var m=Math.floor((a+b)/2);return exists(m).then(function(e){return e?bs(m,b):bs(a,m)})}
+  function up(){var hi=lo+step;return exists(hi).then(function(e){if(e&&step<1e9){lo=hi;step*=2;return up()}return bs(lo,hi)})}
+  return up();
+}
+function agentCount(hint){ // hint: last known count, makes the usual case two calls
+  if(countCache!=null)return Promise.resolve(countCache);
+  var start=hint>0?exists(hint-1).then(function(e){return e?hint-1:null},function(){return null}):Promise.resolve(null);
+  return start.then(function(lo){if(lo!=null)return firstMissing(lo);return exists(0).then(function(any){return any?firstMissing(0):0})})
+    .then(function(n){countCache=n;return n});
+}
+/* last seen first page, for an instant paint on the next visit */
+var CACHE_KEY='charter.registry.v1';
+function readCache(){try{var c=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');return c&&c.count>0&&Array.isArray(c.agents)?c:null}catch(e){return null}}
+function writeCache(n,list){try{localStorage.setItem(CACHE_KEY,JSON.stringify({count:n,agents:list}))}catch(e){}}
+function fetchAgents(ids){
+  var reqs=[];ids.forEach(function(id){reqs.push(ethCall(SEL.tokenURI+word(id)));reqs.push(ethCall(SEL.ownerOf+word(id)))});
+  reqs.forEach(function(r,i){r.id=i+1});
+  return batch(reqs).then(function(res){return Promise.all(ids.map(function(id,k){
+    var u=res[k*2],o=res[k*2+1];var uri=u&&u.result?decString(u.result):'';var owner=o&&o.result?decAddr(o.result):null;
+    return loadMeta(uri).then(function(meta){return {id:id,uri:uri,owner:owner,meta:meta}});
+  }))});
+}
+function loadMeta(uri){
+  if(!uri)return Promise.resolve(null);
+  try{
+    var m=/^data:application\/json(;[^,]*)?,(.*)$/s.exec(uri);
+    if(m){var isB64=/;base64/i.test(m[1]||'');return Promise.resolve(JSON.parse(isB64?unb64utf8(m[2]):decodeURIComponent(m[2])))}
+    var url=uri.replace(/^ipfs:\/\//,'https://ipfs.io/ipfs/');
+    if(!/^https:\/\//.test(url))return Promise.resolve(null);
+    var c=new AbortController();setTimeout(function(){c.abort()},6000);
+    return fetch(url,{signal:c.signal}).then(function(r){return r.ok?r.json():null}).catch(function(){return null});
+  }catch(e){return Promise.resolve(null)}
+}
+function safeImg(src){if(typeof src!=='string')return null;src=src.trim();
+  if(/^data:image\/(png|jpe?g|webp|gif|avif);base64,[A-Za-z0-9+/=]+$/.test(src))return src;
+  if(/^ipfs:\/\//.test(src))return src.replace(/^ipfs:\/\//,'https://ipfs.io/ipfs/');
+  if(/^https:\/\//.test(src))return src;return null}
+function safeHref(v){return typeof v==='string'&&/^https?:\/\//.test(v.trim())?v.trim():null}
+
+/* ================= dom helpers ================= */
+function $(id){return document.getElementById(id)}
+function h(tag,attrs,kids){var e=document.createElement(tag);if(attrs)for(var k in attrs){if(k==='text')e.textContent=attrs[k];else if(k==='cls')e.className=attrs[k];else e.setAttribute(k,attrs[k])}
+  (kids||[]).forEach(function(c){if(c!=null)e.appendChild(typeof c==='string'?document.createTextNode(c):c)});return e}
+function avatar(meta,name,cls){var d=h('div',{cls:cls||'av'});var src=meta&&safeImg(meta.image);
+  if(src){var im=h('img',{alt:'',loading:'lazy',referrerpolicy:'no-referrer'});im.onerror=function(){d.textContent=initial(name)};im.src=src;d.appendChild(im)}else d.textContent=initial(name);return d}
+function initial(n){return (n||'?').trim().charAt(0).toUpperCase()||'?'}
+function svcNames(meta){var s=meta&&Array.isArray(meta.services)?meta.services:(meta&&Array.isArray(meta.endpoints)?meta.endpoints:[]);return s.filter(function(x){return x&&typeof x.name==='string'}).map(function(x){return x.name})}
+function setNet(ok){if(rpcOk===ok)return;rpcOk=ok;$('net').className='net '+(ok?'on':'off');$('netTxt').textContent=ok?'Robinhood Chain':'Chain unreachable'}
+function copyText(t,btn){var done=function(){if(btn){var o=btn.textContent;btn.textContent='Copied';setTimeout(function(){btn.textContent=o},1200)}};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,function(){});}
+
+/* ================= wallet ================= */
+var account=null;
+function eth(){return window.ethereum||null}
+function updateConnect(){var b=$('connectBtn');b.textContent=account?short(account):'Connect wallet';b.classList.toggle('ghost',!!account);syncSubmit()}
+function connect(){var p=eth();if(!p)return Promise.reject(new Error('No wallet found. Install MetaMask or Rabby, then reload this page.'));
+  return p.request({method:'eth_requestAccounts'}).then(function(a){account=a&&a[0]?a[0].toLowerCase():null;updateConnect();return account})}
+function ensureChain(){var p=eth();return p.request({method:'eth_chainId'}).then(function(c){if(parseInt(c,16)===CHAIN_ID)return;
+  return p.request({method:'wallet_switchEthereumChain',params:[{chainId:CHAIN_HEX}]}).catch(function(e){
+    if(e&&(e.code===4902||(e.data&&e.data.originalError&&e.data.originalError.code===4902)))return p.request({method:'wallet_addEthereumChain',params:[{chainId:CHAIN_HEX,chainName:'Robinhood Chain',nativeCurrency:{name:'Ether',symbol:'ETH',decimals:18},rpcUrls:[RPCS[0]],blockExplorerUrls:[EXPLORER]}]});
+    throw e})})}
+if(eth()){
+  eth().request({method:'eth_accounts'}).then(function(a){if(a&&a[0]){account=a[0].toLowerCase();updateConnect()}}).catch(function(){});
+  if(eth().on){eth().on('accountsChanged',function(a){account=a&&a[0]?a[0].toLowerCase():null;updateConnect()});}
+}
+$('connectBtn').addEventListener('click',function(){if(account)return;
+  if(!eth())return flash('Browsing works without a wallet. To register an agent, install MetaMask or Rabby.',{href:'https://metamask.io/download/',text:'Get MetaMask'});
+  connect().catch(function(e){flash(e&&e.code===4001?'Wallet connection was cancelled.':(e&&e.message)||'Wallet connection was cancelled.')})});
+var toastTm=null;
+function flash(msg,link){if(route().v==='register'){setStatus(msg,'err');return}
+  var t=$('toast');if(!t){t=h('div',{id:'toast',cls:'toast notice err',role:'status'});document.body.appendChild(t)}
+  t.innerHTML='';t.appendChild(document.createTextNode(msg+' '));if(link)t.appendChild(h('a',{href:link.href,target:'_blank',rel:'noopener',text:link.text}));
+  t.classList.add('on');clearTimeout(toastTm);toastTm=setTimeout(function(){t.classList.remove('on')},6000)}
+
+function waitReceipt(hash){var p=eth();return new Promise(function(res,rej){var tries=0;
+  (function poll(){p.request({method:'eth_getTransactionReceipt',params:[hash]}).then(function(r){if(r)return res(r);if(++tries>160)return rej(new Error('Still pending. Check the transaction on Blockscout.'));setTimeout(poll,1500)},function(){if(++tries>160)return rej(new Error('Could not read the receipt.'));setTimeout(poll,2000)})})()})}
+function mintedId(rc){var l=(rc.logs||[]).find(function(x){return x.address&&x.address.toLowerCase()===REG.toLowerCase()&&x.topics&&x.topics[0]===T_TRANSFER&&/^0x0+$/.test(x.topics[1])});return l?parseInt(l.topics[3],16):null}
+
+/* ================= routing ================= */
+function route(){var hs=(location.hash||'#registry').slice(1);var m=/^agent-(\d+)$/.exec(hs);if(m)return {v:'agent',id:parseInt(m[1],10)};
+  return {v:['registry','register','how'].indexOf(hs)>=0?hs:'registry'}}
+function show(){var r=route();['registry','register','agent','how'].forEach(function(v){$('v-'+v).hidden=v!==r.v});
+  document.querySelectorAll('.tab').forEach(function(t){if(t.dataset.tab===r.v)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current')});
+  window.scrollTo(0,0);
+  if(r.v==='registry')initRegistry();if(r.v==='agent')renderAgent(r.id);if(r.v==='register')updatePreview()}
+addEventListener('hashchange',show);
+
+/* ================= registry ================= */
+var agents=[], nextLow=null, regInit=false, usingExamples=false;
+var EXAMPLES=[
+  {id:null,owner:'0x1f9a000000000000000000000000000000003c21',meta:{name:'Atlas Research',description:'Reads filings and earnings calls for tokenized stocks and returns a cited one-page brief.',services:[{name:'web'},{name:'MCP'}]}},
+  {id:null,owner:'0x7b2e000000000000000000000000000000009e04',meta:{name:'Ledgerline',description:'Reconciles wallet activity into a monthly statement with categories and cost basis.',services:[{name:'A2A'},{name:'email'}],x402Support:true}},
+  {id:null,owner:'0xa04c00000000000000000000000000000000177b',meta:{name:'Quill Ops',description:'Drafts and schedules launch announcements across X and Telegram for new projects.',services:[{name:'web'}]}}
+];
+function rowEl(a){
+  var meta=a.meta||{},name=typeof meta.name==='string'&&meta.name.trim()?meta.name.trim():'Agent #'+a.id;
+  var desc=typeof meta.description==='string'?meta.description:'';
+  var chips=h('div',{cls:'chips'});
+  if(a.example)chips.appendChild(h('span',{cls:'chip ex',text:'Example'}));
+  svcNames(meta).slice(0,3).forEach(function(n){chips.appendChild(h('span',{cls:'chip',text:n}))});
+  if(meta.x402Support===true)chips.appendChild(h('span',{cls:'chip red',text:'x402'}));
+  if(!a.meta&&!a.example)chips.appendChild(h('span',{cls:'chip',text:a.uri?'Profile unreadable':'No profile',title:a.uri?'The profile is hosted on a server this site cannot read from the browser':''}));
+  var el=h(a.example?'div':'a',a.example?{cls:'row'}:{cls:'row',href:'#agent-'+a.id},[
+    h('span',{cls:'id num',text:a.example?'—':'#'+a.id}),avatar(a.meta,name),
+    h('div',{cls:'nm'},[h('h3',{text:name}),h('p',{text:desc||'No description'})]),chips,
+    h('span',{cls:'own',text:short(a.owner)}),h('span',{cls:'go',text:'→'})]);
+  el.dataset.search=(name+' '+desc+' '+(a.id!=null?'#'+a.id+' '+a.id:'')+' '+(a.owner||'')).toLowerCase();
+  return el;
+}
+function isEmpty(a){var m=a.meta;return !m||!((typeof m.name==='string'&&m.name.trim())||(typeof m.description==='string'&&m.description.trim()))}
+function renderLedger(){var L=$('ledger'),q=$('q').value.trim().toLowerCase();L.innerHTML='';
+  var list=usingExamples?EXAMPLES.map(function(e){return Object.assign({example:true},e)}):agents;
+  var hide=$('hideEmpty').checked,hidden=0;
+  var shown=0;list.forEach(function(a){if(hide&&!a.example&&isEmpty(a)){hidden++;return}var el=rowEl(a);if(!q||el.dataset.search.indexOf(q)>=0){L.appendChild(el);shown++}});
+  if(!shown)L.appendChild(h('div',{cls:'notice',text:q?'No loaded agent matches "'+q+'". Load older agents to search further.':hidden?'None of the '+hidden+' loaded agents has a profile this site can read. Load older agents or untick "Readable profiles only".':'No agents registered yet. Yours can be #0.'}));
+  $('statShown').textContent=usingExamples?0:agents.length;
+  $('moreBtn').hidden=usingExamples||nextLow==null||nextLow<0;
+}
+function loadPage(){
+  if(nextLow==null||nextLow<0)return Promise.resolve();
+  var ids=[];for(var i=nextLow;i>nextLow-PAGE&&i>=0;i--)ids.push(i);nextLow=nextLow-PAGE;
+  return fetchAgents(ids).then(function(list){agents=agents.concat(list);renderLedger()});
+}
+function initRegistry(){
+  if(regInit)return;regInit=true;var L=$('ledger');
+  var cached=readCache();
+  if(cached&&!agents.length){agents=cached.agents;nextLow=null;$('statCount').textContent=cached.count.toLocaleString('en-US');renderLedger()}
+  else{L.innerHTML='';for(var i=0;i<5;i++)L.appendChild(h('div',{cls:'skel'}))}
+  agentCount(cached&&cached.count).then(function(n){$('statCount').textContent=n.toLocaleString('en-US');agents=[];nextLow=n-1;
+    try{localStorage.setItem('charter.count',String(n))}catch(e){}
+    return loadPage().then(function(){writeCache(n,agents.slice(0,PAGE))})}).catch(function(){
+    if(cached){agents=cached.agents;nextLow=null;renderLedger();$('regNotice').innerHTML='';$('regNotice').appendChild(h('div',{cls:'notice',text:'Robinhood Chain is not answering right now, so this is the last saved copy of the registry.'}));regInit=false;return}
+    usingExamples=true;$('statCount').textContent='—';
+    $('regNotice').appendChild(h('div',{cls:'notice',text:'Live registry data could not load here, so the rows below are examples. On the deployed site Charter AI reads the registry directly from Robinhood Chain.'}));
+    renderLedger();regInit=false;
+  });
+}
+$('q').addEventListener('input',renderLedger);
+try{if(localStorage.getItem('charter.showEmpty')==='1')$('hideEmpty').checked=false}catch(e){}
+$('hideEmpty').addEventListener('change',function(){try{localStorage.setItem('charter.showEmpty',this.checked?'0':'1')}catch(e){}renderLedger()});
+$('moreBtn').addEventListener('click',function(){var b=this;b.disabled=true;b.textContent='Loading…';loadPage().finally(function(){b.disabled=false;b.textContent='Load older agents'})});
+
+/* ================= agent profile ================= */
+function renderAgent(id){
+  var B=$('agentBody');B.innerHTML='';B.appendChild(h('div',{cls:'skel'}));
+  fetchAgents([id]).then(function(list){var a=list[0];B.innerHTML='';
+    if(!a.owner){B.appendChild(h('div',{cls:'notice err',text:'Agent #'+id+' does not exist in the registry yet.'}));B.appendChild(h('a',{cls:'btn',href:'#registry',text:'Back to registry'}));return}
+    var meta=a.meta||{},name=typeof meta.name==='string'&&meta.name.trim()?meta.name.trim():'Agent #'+id;
+    var chips=h('div',{cls:'chips',style:'margin-top:14px'});
+    chips.appendChild(h('span',{cls:'chip '+(meta.active===false?'':'red'),text:meta.active===false?'Inactive':'Active'}));
+    if(meta.x402Support===true)chips.appendChild(h('span',{cls:'chip',text:'x402'}));
+    var regs=Array.isArray(meta.registrations)?meta.registrations:[];
+    var bound=regs.some(function(r){return r&&String(r.agentId)===String(id)&&typeof r.agentRegistry==='string'&&r.agentRegistry.toLowerCase()===REG_ID.toLowerCase()});
+    chips.appendChild(h('span',{cls:'chip',text:bound?'Registration bound':'Registration not bound'}));
+    var left=h('div',null,[
+      h('div',{cls:'ptop'},[avatar(a.meta,name,'avbig'),h('div',{cls:'meta'},[h('div',{cls:'eyebrow',text:'Agent #'+id+' · Robinhood Chain'}),h('h1',{text:name,style:'margin-top:12px'}),chips])]),
+      h('p',{cls:'desc',text:typeof meta.description==='string'&&meta.description?meta.description:'This agent has no description.'})]);
+    var svcs=Array.isArray(meta.services)?meta.services:(Array.isArray(meta.endpoints)?meta.endpoints:[]);
+    if(svcs.length){left.appendChild(h('h2',{text:'Services',style:'margin-bottom:12px'}));var sl=h('div',{cls:'svclist'});
+      svcs.forEach(function(s){if(!s||typeof s.name!=='string')return;var ep=typeof s.endpoint==='string'?s.endpoint:'';var href=safeHref(ep);
+        sl.appendChild(h('div',null,[h('span',{text:s.name}),href?h('a',{href:href,target:'_blank',rel:'noopener nofollow',text:ep}):h('span',{text:ep||'—'})]))});left.appendChild(sl)}
+    var raw=h('details',{style:'margin-top:28px'},[h('summary',null,['Registration file',h('span',{cls:'muted',text:'view'})]),h('pre',{text:a.meta?JSON.stringify(a.meta,null,2):(a.uri||'Empty agentURI')})]);
+    left.appendChild(raw);
+    var link=location.href.split('#')[0]+'#agent-'+id;
+    var cp=h('button',{cls:'copy',type:'button',text:'Copy'});cp.addEventListener('click',function(){copyText(link,cp)});
+    var side=h('aside',{cls:'side'},[h('div',{cls:'eyebrow',text:'On-chain record'}),
+      h('dl',{cls:'kv'},[h('dt',{text:'Agent ID'}),h('dd',{cls:'num',text:String(id)}),h('dt',{text:'Owner'}),h('dd',null,[h('a',{href:EXPLORER+'/address/'+a.owner,target:'_blank',rel:'noopener',text:short(a.owner)})]),
+        h('dt',{text:'Registry'}),h('dd',{text:REG_ID}),h('dt',{text:'Storage'}),h('dd',{text:/^data:/.test(a.uri)?'Fully on chain':(a.uri?'External URI':'None')})]),
+      h('a',{cls:'btn ghost sm',href:EXPLORER+'/token/'+REG+'/instance/'+id,target:'_blank',rel:'noopener',text:'View on Blockscout'}),
+      h('div',{style:'font-size:12.5px;color:var(--lab)'},['Profile link',cp]),
+      account&&a.owner&&account===a.owner.toLowerCase()&&!bound?h('div',{cls:'notice',text:'This profile is not bound to its agent ID. Register a new agent or edit the profile to add the registrations entry.'}):null]);
+    B.appendChild(h('a',{href:'#registry',cls:'muted',style:'display:inline-block;margin-bottom:24px;text-decoration:none;font-size:13.5px',text:'← Registry'}));
+    B.appendChild(h('div',{cls:'prof'},[left,side]));
+  }).catch(function(){B.innerHTML='';B.appendChild(h('div',{cls:'notice err',text:'Could not reach Robinhood Chain to load agent #'+id+'. Check your connection and reload.'}))});
+}
+
+/* ================= register form ================= */
+var avatarData=null;
+var SVC_TYPES=['web','MCP','A2A','email','ENS','X'];
+function addSvc(type,val){var row=h('div',{cls:'svc'});var sel=h('select',{'aria-label':'Service type'});SVC_TYPES.forEach(function(t){var o=h('option',{value:t,text:t});if(t===type)o.selected=true;sel.appendChild(o)});
+  var inp=h('input',{type:'text',placeholder:'https://…','aria-label':'Endpoint'});inp.value=val||'';
+  var x=h('button',{type:'button',cls:'x','aria-label':'Remove service',text:'×'});x.addEventListener('click',function(){row.remove();updatePreview()});
+  sel.addEventListener('change',function(){inp.placeholder=sel.value==='email'?'agent@domain.com':sel.value==='ENS'?'agent.eth':sel.value==='X'?'https://x.com/handle':'https://…';updatePreview()});
+  inp.addEventListener('input',updatePreview);row.appendChild(sel);row.appendChild(inp);row.appendChild(x);$('svcs').appendChild(row)}
+$('addSvc').addEventListener('click',function(){addSvc('web','');updatePreview()});
+addSvc('web','');
+
+function buildJSON(agentId){
+  var services=[];document.querySelectorAll('#svcs .svc').forEach(function(r){var t=r.querySelector('select').value,v=r.querySelector('input').value.trim();if(v)services.push({name:t,endpoint:v})});
+  var img=avatarData||($('fImg').value.trim()&&safeImg($('fImg').value)?$('fImg').value.trim():'');
+  var j={type:'https://eips.ethereum.org/EIPS/eip-8004#registration-v1',name:$('fName').value.trim(),description:$('fDesc').value.trim(),image:img,services:services,
+    x402Support:$('fX402').checked,active:$('fActive').checked};
+  if(agentId!=null)j.registrations=[{agentId:agentId,agentRegistry:REG_ID}];
+  return j;
+}
+function toURI(j){return 'data:application/json;base64,'+b64utf8(JSON.stringify(j))}
+function updatePreview(){
+  var n=$('fName').value.trim(),d=$('fDesc').value.trim();$('cName').textContent=n.length+'/64';$('cDesc').textContent=d.length+'/600';
+  var j=buildJSON(countCache);$('pvName').textContent=n||'Agent name';$('pvDesc').textContent=d||'Description appears here.';
+  ['pvAv','avPrev'].forEach(function(id){var e=$(id);e.innerHTML='';var src=j.image&&safeImg(j.image);if(src){var im=h('img',{alt:'',referrerpolicy:'no-referrer'});im.onerror=function(){e.textContent=initial(n||'A')};im.src=src;e.appendChild(im)}else e.textContent=initial(n||'A')});
+  var c=$('pvChips');c.innerHTML='';c.appendChild(h('span',{cls:'chip '+(j.active?'red':''),text:j.active?'Active':'Inactive'}));j.services.forEach(function(s){c.appendChild(h('span',{cls:'chip',text:s.name}))});if(j.x402Support)c.appendChild(h('span',{cls:'chip',text:'x402'}));
+  $('pvId').textContent=countCache!=null?'#'+countCache+' (next free ID)':'assigned on mint';$('pvOwner').textContent=account?short(account):'your wallet';
+  var pretty=JSON.parse(JSON.stringify(j));if(pretty.image&&pretty.image.length>90)pretty.image=pretty.image.slice(0,60)+'…['+pretty.image.length+' chars]';
+  $('pvJson').textContent=JSON.stringify(pretty,null,2);$('pvSize').textContent=fmtBytes(toURI(j).length);
+}
+function fmtBytes(n){return n<1024?n+' B':(n/1024).toFixed(1)+' KB'}
+['fName','fDesc','fImg'].forEach(function(id){$(id).addEventListener('input',updatePreview)});['fActive','fX402'].forEach(function(id){$(id).addEventListener('change',updatePreview)});
+
+$('fFile').addEventListener('change',function(){var f=this.files&&this.files[0];if(!f)return;if(!/^image\//.test(f.type)){$('avInfo').textContent='That file is not an image.';return}
+  var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var S=160,cv=document.createElement('canvas');cv.width=S;cv.height=S;var x=cv.getContext('2d'),m=Math.min(im.width,im.height);
+    x.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,S,S);var d=cv.toDataURL('image/webp',0.8);if(!/^data:image\/webp/.test(d))d=cv.toDataURL('image/jpeg',0.82);
+    avatarData=d;$('fImg').value='';$('avClear').hidden=false;$('avInfo').textContent='Resized to 160×160 · '+fmtBytes(d.length)+' on chain.';updatePreview()};
+    im.onerror=function(){$('avInfo').textContent='Could not read that image.'};im.src=rd.result};rd.readAsDataURL(f)});
+$('avClear').addEventListener('click',function(){avatarData=null;$('fFile').value='';this.hidden=true;$('avInfo').textContent='Uploads are resized to 160×160 to keep gas low.';updatePreview()});
+
+function setStatus(t,cls){var s=$('formStatus');s.textContent=t||'';s.className='status'+(cls?' '+cls:'')}
+function setStep(n,txt2,txt3){document.querySelectorAll('.step').forEach(function(s){var k=+s.dataset.s;s.className='step'+(k<n?' done':k===n?' cur':'')});if(txt2)$('s2txt').textContent=txt2;if(txt3)$('s3txt').textContent=txt3}
+function syncSubmit(){var b=$('submitBtn');var lbl=account?'Register agent':'Connect wallet';b.firstChild.nodeValue=lbl;if(account)setStep(3,short(account)+' connected');else setStep(1)}
+var busy=false;
+$('form').addEventListener('submit',function(e){e.preventDefault();if(busy)return;
+  var n=$('fName').value.trim(),d=$('fDesc').value.trim();
+  if(!n){setStatus('Add a name for the agent.','err');$('fName').focus();return}
+  if(!d){setStatus('Add a short description so others know what the agent does.','err');$('fDesc').focus();return}
+  var img=$('fImg').value.trim();if(img&&!avatarData&&!safeImg(img)){setStatus('The image URL must start with https://','err');return}
+  if(!eth()){setStatus('No wallet found in this browser. Install MetaMask or Rabby, then reload the page.','err');return}
+  busy=true;var b=$('submitBtn');b.disabled=true;
+  var predicted=null, txHash=null;
+  connect().then(function(){setStatus('Switching to Robinhood Chain…');return ensureChain()})
+  .then(function(){setStep(3,short(account)+' on Robinhood Chain','Confirm in your wallet');countCache=null;return agentCount().then(function(c){predicted=c},function(){predicted=null})})
+  .then(function(){var uri=toURI(buildJSON(predicted));setStatus('Confirm the transaction in your wallet.');
+    return eth().request({method:'eth_sendTransaction',params:[{from:account,to:REG,data:encRegister(uri)}]})})
+  .then(function(hash){txHash=hash;setStatus('Transaction sent. Waiting for Robinhood Chain to confirm…');setStep(3,null,'Pending '+short(hash));return waitReceipt(hash)})
+  .then(function(rc){if(rc.status&&parseInt(rc.status,16)!==1)throw new Error('The transaction failed on chain. No agent was created.');
+    var id=mintedId(rc);countCache=null;regInit=false;agents=[];setStep(4);setStatus('');showDone(id,txHash,predicted)})
+  .catch(function(err){var m=err&&(err.code===4001||/reject|denied|cancel/i.test(err.message||''))?'You cancelled the request in your wallet. Nothing was sent.':(err&&err.message)||'Something went wrong. Try again.';setStatus(m,'err')})
+  .finally(function(){busy=false;b.disabled=false});
+});
+function showDone(id,hash,predicted){
+  var box=$('regDone');box.innerHTML='';
+  var mismatch=id!=null&&predicted!==id;
+  var kids=[h('div',{cls:'eyebrow',text:'Registered'}),h('h2',null,['Agent ',h('span',{text:id!=null?'#'+id:''}),' is live on Robinhood Chain']),
+    h('p',{cls:'muted',text:'Your wallet owns this agent. Share its profile link so other apps and people can verify it.'})];
+  var acts=h('div',{cls:'actions'});
+  if(id!=null)acts.appendChild(h('a',{cls:'btn',href:'#agent-'+id,text:'Open profile'}));
+  acts.appendChild(h('a',{cls:'btn ghost',href:EXPLORER+'/tx/'+hash,target:'_blank',rel:'noopener',text:'View transaction'}));
+  kids.push(acts);
+  if(mismatch){var fix=h('button',{cls:'btn ghost sm',type:'button',text:'Bind profile to #'+id});
+    var st=h('div',{cls:'status'});
+    fix.addEventListener('click',function(){fix.disabled=true;st.textContent='Confirm the update in your wallet.';
+      eth().request({method:'eth_sendTransaction',params:[{from:account,to:REG,data:encSetURI(id,toURI(buildJSON(id)))}]}).then(function(hh){st.textContent='Waiting for confirmation…';return waitReceipt(hh)})
+      .then(function(){st.textContent='Profile bound to agent #'+id+'.';st.className='status ok';fix.remove()}).catch(function(e){st.textContent=(e&&e.message)||'Update failed.';st.className='status err';fix.disabled=false})});
+    kids.push(h('div',{cls:'notice'},['Another agent was registered moments before yours, so your profile names the wrong ID. One more transaction fixes it. ',fix,st]));}
+  box.appendChild(h('div',{cls:'done',style:'margin-bottom:32px'},kids));
+  $('regGrid').hidden=true;
+}
+
+/* boot */
+agentCount().then(function(){if(route().v==='register')updatePreview()}).catch(function(){});
+updateConnect();show();
+})();
+</script>
+</body>
+</html>
