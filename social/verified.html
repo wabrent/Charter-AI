@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Charter AI check card</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=block">
+<style>
+/* 1600x900 share card for X. Rendered to PNG with headless Chrome. */
+:root{--red:#c81b1c;--ok:#3fae63;--ink:#fff;--sub:#d9d9d9;--lab:#8f8f8f;--line:rgba(255,255,255,.14);--line2:rgba(255,255,255,.26);
+  --SG:'Space Grotesk',Arial,sans-serif;--JB:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1600px;height:900px;background:#000;color:var(--ink);font-family:var(--JB);-webkit-font-smoothing:antialiased;overflow:hidden}
+.card{position:relative;width:1600px;height:900px;overflow:hidden;background:#000}
+.grid{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;opacity:.35;
+  -webkit-mask-image:radial-gradient(ellipse 60% 70% at 80% 40%,#000,transparent 75%)}
+.glow{position:absolute;inset:0;background:radial-gradient(ellipse 40% 55% at 82% 38%,rgba(200,27,28,.22),transparent 70%)}
+canvas{position:absolute;inset:0}
+.in{position:absolute;inset:0;padding:72px 88px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:18px;font:700 40px/1 var(--SG);letter-spacing:-.03em}
+.brand svg{width:52px;height:52px}
+.brand i{font-style:normal;color:var(--red)}
+.eyebrow{margin-top:72px;font:400 22px/1 var(--JB);letter-spacing:.22em;text-transform:uppercase;color:var(--lab)}
+h1{margin-top:26px;font:700 104px/1 var(--SG);letter-spacing:-.045em;display:flex;align-items:center;gap:28px}
+h1 b{width:26px;height:88px;background:var(--ok);display:inline-block}
+.score{margin-top:30px;display:flex;align-items:baseline;gap:14px}
+.score .n{font:500 76px/1 var(--JB)}
+.score .d{font:400 30px/1 var(--JB);color:var(--lab)}
+.bar{position:relative;margin-top:22px;width:560px;height:10px;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.bar i{display:block;height:100%}
+.bar i:nth-child(1){background:#5a2a2a}.bar i:nth-child(2){background:#6a4232}.bar i:nth-child(3){background:#5c5a34}.bar i:nth-child(4){background:#3d5a3c}.bar i:nth-child(5){background:#2f6a45}
+.bar u{position:absolute;top:-8px;width:4px;height:26px;background:#fff;left:calc(62% - 2px)}
+.scale{margin-top:12px;width:560px;display:flex;justify-content:space-between;font:400 16px/1 var(--JB);color:var(--lab);letter-spacing:.1em}
+.checks{position:absolute;right:88px;top:250px;width:640px;border:1px solid var(--line2);background:rgba(6,6,6,.88)}
+.checks .hd{padding:22px 30px;border-bottom:1px solid var(--line);font:500 18px/1 var(--JB);letter-spacing:.18em;color:var(--lab)}
+.row{display:flex;gap:22px;padding:26px 30px;border-bottom:1px solid var(--line);align-items:flex-start}
+.row:last-child{border-bottom:0}
+.tick{flex:none;width:40px;height:40px;border:1.5px solid var(--ok);display:grid;place-items:center;color:var(--ok);font:700 24px/1 var(--SG)}
+.row b{display:block;font:500 30px/1.15 var(--SG);letter-spacing:-.01em}
+.row span{display:block;margin-top:8px;font:400 19px/1.4 var(--JB);color:var(--sub)}
+.foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;font:400 22px/1.4 var(--JB);color:var(--sub)}
+.foot .src{color:var(--lab);font-size:19px}
+.foot .tag{font:500 20px/1 var(--JB);letter-spacing:.14em;color:#fff;border:1px solid var(--line2);padding:14px 18px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="glow"></div><div class="grid"></div><canvas id="net" width="1600" height="900"></canvas>
+  <div class="in">
+    <div class="brand">
+      <svg viewBox="0 0 46 46" fill="none" stroke="#fff" stroke-width="3">
+        <g><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+        <g transform="rotate(90 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+        <g transform="rotate(180 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+        <g transform="rotate(270 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+      </svg>
+      <span>Charter<i>.</i>AI</span>
+    </div>
+    <div class="eyebrow">Independent check · larpcheck.app</div>
+    <h1><b></b>LIKELY REAL</h1>
+    <div class="score"><span class="n">62</span><span class="d">/100</span></div>
+    <div class="bar"><i></i><i></i><i></i><i></i><i></i><u></u></div>
+    <div class="scale"><span>LARP</span><span>PARTLY</span><span>REAL</span></div>
+    <div class="foot">
+      <div>ERC-8004 agent identity<br>on Robinhood Chain<div class="src">Report: larpcheck.app/c/5tcR07SJnA</div></div>
+    </div>
+  </div>
+  <div class="checks">
+    <div class="hd">VERIFIED ON CHAIN</div>
+    <div class="row"><div class="tick">✓</div><div><b>Registry is live</b><span>Official ERC-8004 Identity Registry<br>0x8004…a432 on chain 4663</span></div></div>
+    <div class="row"><div class="tick">✓</div><div><b>Profiles fully on chain</b><span>Agent profiles decode from data: URIs.<br>No database, no IPFS.</span></div></div>
+    <div class="row"><div class="tick">✓</div><div><b>Same data as the site</b><span>The site's RPC reads match<br>what the checker read on chain.</span></div></div>
+  </div>
+</div>
+<script>
+/* static network in the top-right, same look as the site background */
+(function(){var c=document.getElementById('net').getContext('2d'),sd=11;function r(){sd=(sd*16807)%2147483647;return (sd-1)/2147483646}
+  var P=[],i,j,n=170,cx=1240,cy=150,R=330,ay=.6,ax=.42,ca=Math.cos(ay),sa=Math.sin(ay),cb=Math.cos(ax),sb=Math.sin(ax);
+  for(i=0;i<n;i++){var u=r()*2-1,v=r()*6.283,rr=i<130?1:.4+r()*.5,s=Math.sqrt(1-u*u),x=s*Math.cos(v)*rr,y=u*rr,z=s*Math.sin(v)*rr;
+    var X=x*ca-z*sa,Z=x*sa+z*ca,Y=y*cb-Z*sb;Z=y*sb+Z*cb;var k=2.6/(2.6+Z);P.push({x:cx+X*R*k,y:cy+Y*R*k,z:Z,k:k,hot:r()<.07,o:{x:x,y:y,z:z}})}
+  for(i=0;i<n;i++)for(j=i+1;j<n;j++){var a=P[i].o,b=P[j].o,d=(a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z);
+    if(d<.075){c.strokeStyle='rgba(255,255,255,'+(.04+.12*(1-(P[i].z+P[j].z+2)/4)).toFixed(3)+')';c.beginPath();c.moveTo(P[i].x,P[i].y);c.lineTo(P[j].x,P[j].y);c.stroke()}}
+  P.forEach(function(p){var s;if(p.hot){s=5*p.k;c.fillStyle='rgba(200,27,28,.9)'}else{s=2.2*p.k;c.fillStyle='rgba(255,255,255,'+(.15+.5*(1-(p.z+1)/2)).toFixed(3)+')'}c.fillRect(p.x-s/2,p.y-s/2,s,s)});
+})();
+window.ready=document.fonts.ready.then(function(){return true});
+</script>
+</body>
+</html>

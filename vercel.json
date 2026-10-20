@@ -1,0 +1,7 @@
+{
+  "cleanUrls": false,
+  "rewrites": [
+    { "source": "/agent/:id", "destination": "/api/agent?id=:id" },
+    { "source": "/og/agent/:id.png", "destination": "/api/og?id=:id" }
+  ]
+}

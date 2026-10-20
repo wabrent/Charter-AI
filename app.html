@@ -158,6 +158,13 @@ details pre{padding:14px 16px;border-top:1px solid var(--line);font:400 12px/1.5
 .cost{display:flex;justify-content:space-between;font-size:12.5px;color:var(--lab)}
 .cost b{color:#fff;font-weight:500}
 .actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.txnote{border:1px solid var(--line);margin-top:4px;font-size:12.5px}
+.txnote>div{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;padding:9px 14px;border-bottom:1px solid var(--line)}
+.txnote>div:last-child{border-bottom:0}
+.txnote span{color:var(--lab)}
+.txnote b{font-weight:400;color:var(--sub);word-break:break-word}
+.txnote a{color:#fff}
+.txnote code{color:#fff}
 .status{font-size:13.5px;min-height:20px}
 .status.err{color:#ff6b6b}.status.ok{color:var(--ok)}
 .done{border:1px solid var(--ok);padding:24px;display:flex;flex-direction:column;gap:14px}
@@ -291,6 +298,12 @@ footer a{color:var(--sub)}
         <div class="f" style="display:flex;flex-direction:column;gap:10px">
           <label class="check"><input type="checkbox" id="fActive" checked> Agent is active and accepting work</label>
           <label class="check"><input type="checkbox" id="fX402"> Accepts x402 payments</label>
+        </div>
+        <div class="txnote" id="txNote">
+          <div><span>Sends</span><b>1 transaction</b></div>
+          <div><span>To</span><b><a href="https://robinhoodchain.blockscout.com/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener">0x8004…a432</a> ERC-8004 Identity Registry</b></div>
+          <div><span>Calls</span><b><code>register(string agentURI)</code>, no approvals, no other contracts</b></div>
+          <div><span>Cost</span><b id="gasEst">Gas only, in ETH on Robinhood Chain. Charter AI charges nothing.</b></div>
         </div>
         <div class="status" id="formStatus" role="status"></div>
         <div class="actions">
@@ -553,18 +566,23 @@ function renderAgent(id){
         sl.appendChild(h('div',null,[h('span',{text:s.name}),href?h('a',{href:href,target:'_blank',rel:'noopener nofollow',text:ep}):h('span',{text:ep||'—'})]))});left.appendChild(sl)}
     var raw=h('details',{style:'margin-top:28px'},[h('summary',null,['Registration file',h('span',{cls:'muted',text:'view'})]),h('pre',{text:a.meta?JSON.stringify(a.meta,null,2):(a.uri||'Empty agentURI')})]);
     left.appendChild(raw);
-    var link=location.href.split('#')[0]+'#agent-'+id;
+    var link=shareLink(id);
     var cp=h('button',{cls:'copy',type:'button',text:'Copy'});cp.addEventListener('click',function(){copyText(link,cp)});
     var side=h('aside',{cls:'side'},[h('div',{cls:'eyebrow',text:'On-chain record'}),
       h('dl',{cls:'kv'},[h('dt',{text:'Agent ID'}),h('dd',{cls:'num',text:String(id)}),h('dt',{text:'Owner'}),h('dd',null,[h('a',{href:EXPLORER+'/address/'+a.owner,target:'_blank',rel:'noopener',text:short(a.owner)})]),
         h('dt',{text:'Registry'}),h('dd',{text:REG_ID}),h('dt',{text:'Storage'}),h('dd',{text:/^data:/.test(a.uri)?'Fully on chain':(a.uri?'External URI':'None')})]),
       h('a',{cls:'btn ghost sm',href:EXPLORER+'/token/'+REG+'/instance/'+id,target:'_blank',rel:'noopener',text:'View on Blockscout'}),
+      h('a',{cls:'btn sm',href:xIntent(name,id),target:'_blank',rel:'noopener',text:'Share on X'}),
       h('div',{style:'font-size:12.5px;color:var(--lab)'},['Profile link',cp]),
       account&&a.owner&&account===a.owner.toLowerCase()&&!bound?h('div',{cls:'notice',text:'This profile is not bound to its agent ID. Register a new agent or edit the profile to add the registrations entry.'}):null]);
     B.appendChild(h('a',{href:'#registry',cls:'muted',style:'display:inline-block;margin-bottom:24px;text-decoration:none;font-size:13.5px',text:'← Registry'}));
     B.appendChild(h('div',{cls:'prof'},[left,side]));
   }).catch(function(){B.innerHTML='';B.appendChild(h('div',{cls:'notice err',text:'Could not reach Robinhood Chain to load agent #'+id+'. Check your connection and reload.'}))});
 }
+
+/* Share links: /agent/:id has preview tags for X (served by a Vercel function); local previews fall back to the hash route. */
+function shareLink(id){return /^(localhost|127\.|\[::1\])/.test(location.hostname)||location.protocol==='file:'?location.href.split('#')[0]+'#agent-'+id:location.origin+'/agent/'+id}
+function xIntent(name,id){return 'https://x.com/intent/post?text='+encodeURIComponent(name+' has an on-chain identity on Robinhood Chain (ERC-8004 agent #'+id+')')+'&url='+encodeURIComponent(shareLink(id))}
 
 /* ================= register form ================= */
 var avatarData=null;
@@ -608,6 +626,18 @@ $('avClear').addEventListener('click',function(){avatarData=null;$('fFile').valu
 function setStatus(t,cls){var s=$('formStatus');s.textContent=t||'';s.className='status'+(cls?' '+cls:'')}
 function setStep(n,txt2,txt3){document.querySelectorAll('.step').forEach(function(s){var k=+s.dataset.s;s.className='step'+(k<n?' done':k===n?' cur':'')});if(txt2)$('s2txt').textContent=txt2;if(txt3)$('s3txt').textContent=txt3}
 function syncSubmit(){var b=$('submitBtn');var lbl=account?'Register agent':'Connect wallet';b.firstChild.nodeValue=lbl;if(account)setStep(3,short(account)+' connected');else setStep(1)}
+function storedCount(){try{return +localStorage.getItem('charter.count')||0}catch(e){return 0}}
+function fmtEth(wei){var v=Number(wei)/1e18;return v===0?'0':v<0.00001?'<0.00001':String(+v.toPrecision(2))}
+/* Before the wallet opens: show the gas estimate and stop early with a clear message if the wallet cannot pay it. */
+function preflight(data){var p=eth();
+  return Promise.all([p.request({method:'eth_getBalance',params:[account,'latest']}),
+    p.request({method:'eth_estimateGas',params:[{from:account,to:REG,data:data}]}).catch(function(){return null}),
+    p.request({method:'eth_gasPrice'}).catch(function(){return null})])
+  .then(function(r){var bal=BigInt(r[0]||'0x0'),cost=r[1]&&r[2]?BigInt(r[1])*BigInt(r[2])*12n/10n:null;
+    if(cost!=null)$('gasEst').textContent='About '+fmtEth(cost)+' ETH of gas on Robinhood Chain (estimate). Charter AI charges nothing.';
+    if(bal===0n)throw new Error('Your wallet has 0 ETH on Robinhood Chain. Add a little ETH for gas'+(cost!=null?' (about '+fmtEth(cost)+' ETH)':'')+' and try again.');
+    if(cost!=null&&bal<cost)throw new Error('Your wallet has '+fmtEth(bal)+' ETH on Robinhood Chain, and this registration needs about '+fmtEth(cost)+' ETH for gas. Add ETH and try again.');
+  })}
 var busy=false;
 $('form').addEventListener('submit',function(e){e.preventDefault();if(busy)return;
   var n=$('fName').value.trim(),d=$('fDesc').value.trim();
@@ -618,9 +648,11 @@ $('form').addEventListener('submit',function(e){e.preventDefault();if(busy)retur
   busy=true;var b=$('submitBtn');b.disabled=true;
   var predicted=null, txHash=null;
   connect().then(function(){setStatus('Switching to Robinhood Chain…');return ensureChain()})
-  .then(function(){setStep(3,short(account)+' on Robinhood Chain','Confirm in your wallet');countCache=null;return agentCount().then(function(c){predicted=c},function(){predicted=null})})
-  .then(function(){var uri=toURI(buildJSON(predicted));setStatus('Confirm the transaction in your wallet.');
-    return eth().request({method:'eth_sendTransaction',params:[{from:account,to:REG,data:encRegister(uri)}]})})
+  .then(function(){setStep(3,short(account)+' on Robinhood Chain','Checking gas');setStatus('Checking your balance and the gas cost…');
+    var hint=countCache||storedCount();countCache=null;return agentCount(hint).then(function(c){predicted=c},function(){predicted=null})})
+  .then(function(){var data=encRegister(toURI(buildJSON(predicted)));
+    return preflight(data).then(function(){setStep(3,null,'Confirm in your wallet');setStatus('Confirm in your wallet: one call to register() on the registry 0x8004…a432.');
+      return eth().request({method:'eth_sendTransaction',params:[{from:account,to:REG,data:data}]})})})
   .then(function(hash){txHash=hash;setStatus('Transaction sent. Waiting for Robinhood Chain to confirm…');setStep(3,null,'Pending '+short(hash));return waitReceipt(hash)})
   .then(function(rc){if(rc.status&&parseInt(rc.status,16)!==1)throw new Error('The transaction failed on chain. No agent was created.');
     var id=mintedId(rc);countCache=null;regInit=false;agents=[];setStep(4);setStatus('');showDone(id,txHash,predicted)})
@@ -633,7 +665,8 @@ function showDone(id,hash,predicted){
   var kids=[h('div',{cls:'eyebrow',text:'Registered'}),h('h2',null,['Agent ',h('span',{text:id!=null?'#'+id:''}),' is live on Robinhood Chain']),
     h('p',{cls:'muted',text:'Your wallet owns this agent. Share its profile link so other apps and people can verify it.'})];
   var acts=h('div',{cls:'actions'});
-  if(id!=null)acts.appendChild(h('a',{cls:'btn',href:'#agent-'+id,text:'Open profile'}));
+  if(id!=null){acts.appendChild(h('a',{cls:'btn',href:'#agent-'+id,text:'Open profile'}));
+    acts.appendChild(h('a',{cls:'btn ghost',href:xIntent($('fName').value.trim()||'My agent',id),target:'_blank',rel:'noopener',text:'Share on X'}))}
   acts.appendChild(h('a',{cls:'btn ghost',href:EXPLORER+'/tx/'+hash,target:'_blank',rel:'noopener',text:'View transaction'}));
   kids.push(acts);
   if(mismatch){var fix=h('button',{cls:'btn ghost sm',type:'button',text:'Bind profile to #'+id});
@@ -647,7 +680,7 @@ function showDone(id,hash,predicted){
 }
 
 /* boot */
-agentCount().then(function(){if(route().v==='register')updatePreview()}).catch(function(){});
+agentCount(storedCount()).then(function(n){try{localStorage.setItem('charter.count',String(n))}catch(e){}if(route().v==='register')updatePreview()}).catch(function(){});
 updateConnect();show();
 })();
 </script>

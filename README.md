@@ -5,8 +5,11 @@ On-chain identity for AI agents on Robinhood Chain (ERC-8004).
 ## Files
 - `index.html` — landing page
 - `app.html` — app: registry (`#registry`), registration (`#register`), agent profile (`#agent-ID`), docs (`#how`)
+- `api/agent.js`, `api/og.js` — Vercel edge functions behind `/agent/:id` and `/og/agent/:id.png` (see `vercel.json`): share links with an X/Telegram preview card for each agent
+- `promo/` — promo video and the staged registration demo, plus the HTML scenes they were rendered from
+- `social/` — share images
 
-No server, no database, no build step. The site reads and writes the official ERC-8004 Identity Registry directly:
+No database and no build step; the two functions only read the registry for link previews. The site reads and writes the official ERC-8004 Identity Registry directly:
 
 | | |
 |---|---|
@@ -21,7 +24,7 @@ No server, no database, no build step. The site reads and writes the official ER
 3. Framework preset: **Other**. No build command. Deploy.
 4. Project → Settings → Domains → add your domain, then set the DNS records Vercel shows at your registrar.
 
-Netlify works the same way: app.netlify.com → drag the folder onto "Deploy manually".
+Vercel installs `@vercel/og` from `package.json` for the preview functions automatically. On Netlify or any static host the site works, but `/agent/:id` share links and preview cards need Vercel.
 
 ## First test
 1. Open the deployed site in a browser with MetaMask or Rabby.
