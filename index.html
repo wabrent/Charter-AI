@@ -36,7 +36,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 main,header,footer{position:relative;z-index:1}
 
 /* header */
-header{border-bottom:1px solid var(--line)}
+header{border-bottom:1px solid var(--line);z-index:20;background:rgba(0,0,0,.6)}
 .hd{display:flex;align-items:center;gap:2rem;height:4.5rem}
 .brand{display:flex;align-items:center;gap:.75rem;font:700 1.375rem/1 var(--SG);letter-spacing:-.03em;white-space:nowrap}
 .brand svg{width:2rem;height:2rem;flex:none}
@@ -47,8 +47,13 @@ nav{display:flex;align-items:center;gap:2rem;margin-left:1.5rem}
 .nl[aria-expanded="true"]{color:#fff}
 .nl[aria-expanded="true"] svg{transform:rotate(180deg)}
 .nw{position:relative}
-.dd{position:absolute;top:calc(100% + 1rem);left:-1rem;min-width:17rem;background:#000;border:1px solid var(--line2);padding:.5rem 0;display:none;z-index:5}
-.dd.open{display:block}
+.dd{position:absolute;top:calc(100% + 1rem);left:-1rem;min-width:18rem;background:#070707;border:1px solid var(--line2);padding:.4rem 0;display:none;z-index:5;
+  box-shadow:0 24px 60px rgba(0,0,0,.85),0 0 0 1px rgba(0,0,0,.6)}
+.dd::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;background:var(--red)}
+.dd.open{display:block;animation:ddIn .18s cubic-bezier(.22,1,.36,1)}
+@keyframes ddIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.dd a{transition:background .15s,color .15s}
+.dd a+a{border-top:1px solid var(--line)}
 .dd a{display:block;padding:.65rem 1rem;font-size:.95rem;color:var(--sub)}
 .dd a span{display:block;font-size:.78rem;color:var(--lab);margin-top:.2rem}
 .hd .btn{margin-left:auto}

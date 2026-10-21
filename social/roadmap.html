@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Charter AI roadmap card</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=block">
+<style>
+/* 1600x900 roadmap card for X. Rendered to PNG with headless Chrome. */
+:root{--red:#c81b1c;--ok:#3fae63;--sub:#d9d9d9;--lab:#8f8f8f;--dim:#5f5f5f;--line:rgba(255,255,255,.14);--line2:rgba(255,255,255,.26);
+  --SG:'Space Grotesk',Arial,sans-serif;--JB:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1600px;height:900px;background:#000;color:#fff;font-family:var(--JB);-webkit-font-smoothing:antialiased;overflow:hidden}
+.card{position:relative;width:1600px;height:900px;overflow:hidden}
+.glow{position:absolute;inset:0;background:radial-gradient(ellipse 30% 45% at 35% 62%,rgba(200,27,28,.22),transparent 70%)}
+.grid{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;opacity:.22;
+  -webkit-mask-image:radial-gradient(ellipse 70% 70% at 50% 55%,#000,transparent 80%)}
+.in{position:absolute;inset:0;padding:64px 80px}
+.top{display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:16px;font:700 36px/1 var(--SG);letter-spacing:-.03em}
+.brand svg{width:46px;height:46px}.brand i{font-style:normal;color:var(--red)}
+.top .t{font:400 20px/1 var(--JB);letter-spacing:.22em;color:var(--lab)}
+h1{margin-top:44px;font:700 82px/1 var(--SG);letter-spacing:-.04em}
+/* timeline */
+.line{position:absolute;left:80px;right:80px;top:372px;height:2px;background:var(--line2)}
+.line i{position:absolute;left:0;top:0;bottom:0;width:30%;background:linear-gradient(90deg,var(--ok),var(--red))}
+.phases{position:absolute;left:80px;right:80px;top:350px;display:grid;grid-template-columns:repeat(5,1fr);gap:22px}
+.ph{position:relative;padding-top:58px}
+.dot{position:absolute;top:12px;left:0;width:22px;height:22px;border:2px solid var(--line2);background:#000}
+.ph.done .dot{background:var(--ok);border-color:var(--ok)}
+.ph.now .dot{background:var(--red);border-color:var(--red);box-shadow:0 0 0 8px rgba(200,27,28,.22),0 0 30px 6px rgba(200,27,28,.5)}
+.st{font:500 16px/1 var(--JB);letter-spacing:.16em;color:var(--lab)}
+.ph.done .st{color:var(--ok)}.ph.now .st{color:var(--red)}
+.ph h3{margin-top:14px;font:700 34px/1.05 var(--SG);letter-spacing:-.02em}
+.ph ul{list-style:none;margin-top:22px}
+.ph li{position:relative;padding-left:20px;margin-top:12px;font:400 18px/1.4 var(--JB);color:var(--sub)}
+.ph li::before{content:'';position:absolute;left:0;top:10px;width:8px;height:8px;background:var(--dim)}
+.ph.done li::before{background:var(--ok)}.ph.now li::before{background:var(--red)}
+.ph.now{padding:58px 22px 24px;margin:-0 -10px;border:1px solid rgba(200,27,28,.65);background:rgba(200,27,28,.07)}
+.ph.now .dot{left:22px}
+.foot{position:absolute;left:80px;right:80px;bottom:52px;display:flex;justify-content:space-between;font:400 18px/1 var(--JB);color:var(--lab)}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="glow"></div><div class="grid"></div>
+  <div class="line"><i></i></div>
+  <div class="in">
+    <div class="top">
+      <div class="brand"><svg viewBox="0 0 46 46" fill="none" stroke="#fff" stroke-width="3">
+        <g><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g><g transform="rotate(90 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+        <g transform="rotate(180 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g><g transform="rotate(270 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g></svg>
+        <span>Charter<i>.</i>AI</span></div>
+      <div class="t">ROADMAP</div>
+    </div>
+    <h1>Identity for every AI agent<br>on Robinhood Chain</h1>
+  </div>
+  <div class="phases">
+    <div class="ph done"><div class="dot"></div><div class="st">01 · LIVE</div><h3>Registry</h3>
+      <ul><li>Browse every ERC-8004 agent</li><li>Register in one transaction</li><li>Profiles fully on chain</li><li>Independent check: likely real</li></ul></div>
+    <div class="ph now"><div class="dot"></div><div class="st">02 · NEXT</div><h3>$CHARTER</h3>
+      <ul><li>Launch on pons, Robinhood Chain</li><li>Official CA on site and X only</li><li>Public on-chain test registration</li></ul></div>
+    <div class="ph"><div class="dot"></div><div class="st">03 · PLANNED</div><h3>Holder perks</h3>
+      <ul><li>Verified badge for holders' agents</li><li>Featured slots on the home page</li></ul></div>
+    <div class="ph"><div class="dot"></div><div class="st">04 · PLANNED</div><h3>Reputation</h3>
+      <ul><li>ERC-8004 reviews on profiles</li><li>Endpoint uptime checks</li></ul></div>
+    <div class="ph"><div class="dot"></div><div class="st">05 · PLANNED</div><h3>Developer API</h3>
+      <ul><li>Verify any agent in one call</li><li>Integrations with agent projects</li></ul></div>
+  </div>
+  <div class="foot"><span>ERC-8004 · Robinhood Chain · chain ID 4663</span><span>Plans can change. No promises on price.</span></div>
+</div>
+<script>window.ready=document.fonts.ready.then(function(){return true});</script>
+</body>
+</html>

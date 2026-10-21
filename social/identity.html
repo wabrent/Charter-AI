@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Charter AI identity card</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=block">
+<style>
+/* 1600x900 share card: "an agent without an identity is just an API key". Rendered to PNG with headless Chrome. */
+:root{--red:#c81b1c;--ok:#3fae63;--sub:#d9d9d9;--lab:#8f8f8f;--dim:#4a4a4a;--line:rgba(255,255,255,.14);--line2:rgba(255,255,255,.26);
+  --SG:'Space Grotesk',Arial,sans-serif;--JB:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1600px;height:900px;background:#000;color:#fff;font-family:var(--JB);-webkit-font-smoothing:antialiased;overflow:hidden}
+.card{position:relative;width:1600px;height:900px;overflow:hidden}
+.glow{position:absolute;inset:0;background:radial-gradient(ellipse 32% 50% at 76% 60%,rgba(200,27,28,.24),transparent 70%)}
+.grid{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;opacity:.2;
+  -webkit-mask-image:radial-gradient(ellipse 70% 70% at 60% 60%,#000,transparent 80%)}
+.in{position:absolute;inset:0;padding:64px 80px}
+.brand{display:flex;align-items:center;gap:16px;font:700 34px/1 var(--SG);letter-spacing:-.03em}
+.brand svg{width:44px;height:44px}.brand i{font-style:normal;color:var(--red)}
+h1{margin-top:40px;font:700 76px/1.02 var(--SG);letter-spacing:-.04em}
+h1 span{color:var(--red)}
+.cols{position:absolute;left:80px;right:80px;top:372px;display:grid;grid-template-columns:1fr 92px 1fr;align-items:center}
+.box{border:1px solid var(--line2);background:rgba(8,8,8,.9);height:420px;display:flex;flex-direction:column}
+.box .hd{display:flex;justify-content:space-between;align-items:center;padding:18px 26px;border-bottom:1px solid var(--line);font:500 16px/1 var(--JB);letter-spacing:.18em;color:var(--lab)}
+.box .bd{padding:26px;flex:1;display:flex;flex-direction:column}
+.key{font:500 30px/1.3 var(--JB);color:var(--dim);word-break:break-all}
+.q{margin-top:auto;display:grid;gap:12px}
+.q div{display:flex;justify-content:space-between;font:400 20px/1 var(--JB);color:var(--lab);padding-bottom:12px;border-bottom:1px dashed var(--line)}
+.q div:last-child{border-bottom:0;padding-bottom:0}
+.q b{font-weight:400;color:#6b6b6b}
+.arrow{display:flex;justify-content:center}
+.arrow svg{width:56px;height:46px}
+.id{border-color:rgba(200,27,28,.7);box-shadow:0 0 60px rgba(200,27,28,.18)}
+.id .hd{color:#fff}.id .hd span:last-child{color:var(--ok);display:flex;align-items:center;gap:8px}
+.id .hd span:last-child i{width:9px;height:9px;background:var(--ok)}
+.ag{display:flex;align-items:center;gap:20px}
+.av{width:76px;height:76px;border:1px solid var(--line2);display:grid;place-items:center;font:700 38px/1 var(--SG)}
+.ag small{display:block;font:400 17px/1 var(--JB);color:var(--lab);letter-spacing:.12em}
+.ag b{display:block;margin-top:10px;font:700 40px/1 var(--SG);letter-spacing:-.02em}
+.kv{margin-top:auto;display:grid;gap:12px}
+.kv div{display:flex;justify-content:space-between;font:400 20px/1 var(--JB);padding-bottom:12px;border-bottom:1px solid var(--line)}
+.kv div:last-child{border-bottom:0;padding-bottom:0}
+.kv span{color:var(--lab)}
+.kv em{font-style:normal;color:#fff}
+.chips{display:flex;gap:8px}.chips em{border:1px solid var(--line2);padding:4px 10px;font-size:16px}
+.foot{position:absolute;left:80px;right:80px;bottom:40px;display:flex;justify-content:space-between;font:400 18px/1 var(--JB);color:var(--lab)}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="glow"></div><div class="grid"></div>
+  <div class="in">
+    <div class="brand"><svg viewBox="0 0 46 46" fill="none" stroke="#fff" stroke-width="3">
+      <g><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g><g transform="rotate(90 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+      <g transform="rotate(180 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g><g transform="rotate(270 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g></svg>
+      <span>Charter<i>.</i>AI</span></div>
+    <h1>An AI agent without an identity<br>is just <span>an API key.</span></h1>
+  </div>
+  <div class="cols">
+    <div class="box">
+      <div class="hd"><span>WITHOUT IDENTITY</span><span>?</span></div>
+      <div class="bd">
+        <div class="key">sk-•••••••••••••••••••<br>•••••••••••••••••••4f2a</div>
+        <div class="q"><div><span>Who owns it?</span><b>unknown</b></div><div><span>What does it do?</span><b>unknown</b></div><div><span>Where to reach it?</span><b>unknown</b></div><div><span>Can an app verify it?</span><b>no</b></div></div>
+      </div>
+    </div>
+    <div class="arrow"><svg viewBox="0 0 21 18" fill="none" stroke="#c81b1c" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></div>
+    <div class="box id">
+      <div class="hd"><span>ERC-8004 IDENTITY</span><span><i></i>ON CHAIN</span></div>
+      <div class="bd">
+        <div class="ag"><div class="av">A</div><div><small>AGENT #— · EXAMPLE</small><b>Atlas Research</b></div></div>
+        <div class="kv"><div><span>Owner</span><em>0x1f9a…3c21</em></div><div><span>Does</span><em>cited briefs on tokenized stocks</em></div><div><span>Reach</span><span class="chips"><em>web</em><em>MCP</em><em>A2A</em></span></div><div><span>Verify</span><em>any app, by agent ID</em></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Register an agent on Robinhood Chain in under a minute. No code.</span><span>ERC-8004 · chain ID 4663</span></div>
+</div>
+<script>window.ready=document.fonts.ready.then(function(){return true});</script>
+</body>
+</html>
