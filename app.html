@@ -51,6 +51,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .btn svg{width:18px;height:15px;flex:none;transition:transform .25s cubic-bezier(.22,1,.36,1)}
 .btn.ghost{background:transparent;border:1px solid var(--line2)}
 .btn.sm{height:38px;font-size:14.5px;padding:0 14px}
+.btn.trade{background:transparent;border:1px solid var(--red)}
+.ft-ca{word-break:break-all}
+@media (hover:hover){.btn.trade:hover{background:var(--red)}}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 @media (hover:hover){.btn:not([disabled]):hover{background:var(--red-d)}.btn:not([disabled]):hover svg{transform:translateX(3px)}
   .btn.ghost:not([disabled]):hover{background:rgba(255,255,255,.06)} .tab:hover{color:#fff}}
@@ -222,6 +225,7 @@ footer a{color:var(--sub)}
     </nav>
     <div class="right">
       <div class="net" id="net" title="Robinhood Chain"><b></b><span id="netTxt">Robinhood Chain</span></div>
+      <a class="btn sm trade" href="https://ponsfamily.com/launchpad/0x1772cca13b617bad0f605555237b88c8ec3b17b9" target="_blank" rel="noopener">Trade</a>
       <button class="btn sm" id="connectBtn" type="button">Connect wallet</button>
     </div>
   </div>
@@ -354,6 +358,7 @@ footer a{color:var(--sub)}
 <footer><div class="wrap">
   <span>Charter AI · independent interface to the ERC-8004 Identity Registry on Robinhood Chain (ID 4663). Experimental software, use at your own risk.</span>
   <span><a href="https://eips.ethereum.org/EIPS/eip-8004" target="_blank" rel="noopener">ERC-8004</a> · <a href="https://robinhoodchain.blockscout.com/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener">Registry on Blockscout</a></span>
+  <span class="ft-ca">$CHARTER CA <a href="https://robinhoodchain.blockscout.com/token/0x1772cca13b617bad0f605555237b88c8ec3b17b9" target="_blank" rel="noopener">0x1772cca13b617bad0f605555237b88c8ec3b17b9</a> · <a href="https://ponsfamily.com/launchpad/0x1772cca13b617bad0f605555237b88c8ec3b17b9" target="_blank" rel="noopener">Trade</a></span>
 </div></footer>
 
 <script>
