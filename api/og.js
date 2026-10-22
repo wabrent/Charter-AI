@@ -59,12 +59,10 @@ export default async function handler(req) {
   let a = null;
   if (id != null) { try { a = await readAgent(id); } catch (e) { a = null; } }
   const fonts = (await Promise.all([font('Space Grotesk', 700), font('JetBrains Mono', 400)])).filter(Boolean);
-  const opts = { width: 1200, height: 630, fonts: fonts.length ? fonts : undefined, headers: { 'cache-control': 'public, max-age=300, s-maxage=3600' } };
-  try {
-    const r = new ImageResponse(card(a, id, true), opts);
-    await r.clone().arrayBuffer(); // render now so a bad avatar falls back below
-    return r;
-  } catch (e) {
-    return new ImageResponse(card(a, id, false), opts);
-  }
+  const opts = { width: 1200, height: 630, fonts: fonts.length ? fonts : undefined };
+  // Render to bytes here, so an avatar the renderer cannot read falls back to the initial-letter card.
+  let png;
+  try { png = await new ImageResponse(card(a, id, true), opts).arrayBuffer(); } catch (e) { png = null; }
+  if (!png || !png.byteLength) png = await new ImageResponse(card(a, id, false), opts).arrayBuffer();
+  return new Response(png, { headers: { 'content-type': 'image/png', 'cache-control': 'public, max-age=300, s-maxage=3600' } });
 }
