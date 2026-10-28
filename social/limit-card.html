@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>$LIMIT card</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=block">
+<style>
+/* 1600x900 post image for $LIMIT. The mark is limit-logo-1024.png (rendered from limit-logos.html?only=b). */
+:root{--bg:#0d0d0d;--ink:#ece9e2;--sub:#b9b5ad;--lab:#7f7b74;--line:rgba(236,233,226,.14);--SERIF:'Instrument Serif',serif;--MONO:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased}
+.card{position:relative;width:1600px;height:900px;overflow:hidden}
+.mark{position:absolute;right:40px;top:50px;width:760px;height:760px}
+.lab{position:absolute;left:110px;top:110px;font:400 17px/1 var(--MONO);letter-spacing:.16em;text-transform:uppercase;color:var(--sub)}
+h1{position:absolute;left:100px;top:170px;font:400 250px/.9 var(--SERIF);letter-spacing:-.03em}
+.sub{position:absolute;left:110px;top:440px;width:700px;font:400 50px/1.12 var(--SERIF)}
+.sub em{font-style:italic}
+.list{position:absolute;left:110px;top:600px;font:400 19px/1.9 var(--MONO);color:var(--sub);letter-spacing:.02em}
+.rule{position:absolute;left:110px;right:90px;bottom:100px;height:1px;background:var(--line)}
+.foot{position:absolute;left:110px;right:90px;bottom:52px;display:flex;justify-content:space-between;font:400 17px/1 var(--MONO);letter-spacing:.14em;text-transform:uppercase;color:var(--lab)}
+.foot b{font-weight:400;color:var(--sub)}
+</style>
+</head>
+<body>
+<div class="card">
+  <img class="mark" src="limit-logo-1024.png" alt="">
+  <div class="lab">Charter · Robinhood Chain</div>
+  <h1>$LIMIT</h1>
+  <div class="sub">The agent pays.<br><em>Your limits hold.</em></div>
+  <div class="list">· max per payment<br>· max per day<br>· only to addresses you allow</div>
+  <div class="rule"></div>
+  <div class="foot"><span>Spending rules for AI agents · ERC-8004</span><b>charterai.world</b></div>
+</div>
+<script>if(/[?&]launch/.test(location.search)){document.querySelector('.lab').textContent='Live on Robinhood Chain · pons';var c=document.querySelector('.foot span');c.textContent='CA 0x190422befa9200e0628b8a24b4438df2b105ee5a';c.style.textTransform='none';c.style.letterSpacing='.06em';c.style.color='var(--sub)'}
+window.ready=Promise.all([document.fonts.ready,new Promise(function(r){var i=document.querySelector('.mark');i.complete?r():i.onload=r})])</script>
+</body>
+</html>
