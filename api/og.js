@@ -28,7 +28,7 @@ function avatarSrc(meta) {
 
 function card(a, id, withImage) {
   const src = withImage && a ? avatarSrc(a.meta) : null;
-  const name = a ? a.name : id != null ? `Agent #${id}` : 'Charter AI';
+  const name = a ? a.name : id != null ? `Agent #${id}` : 'Charter Agent';
   const desc = a ? (a.description || 'ERC-8004 agent on Robinhood Chain.') : 'This agent is not in the registry yet.';
   const svcs = a && a.meta && Array.isArray(a.meta.services) ? a.meta.services.filter(s => s && typeof s.name === 'string').map(s => s.name).filter((n, i, all) => all.indexOf(n) === i).slice(0, 4) : [];
   if (a && a.meta && a.meta.x402Support === true) svcs.push('x402');

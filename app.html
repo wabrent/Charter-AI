@@ -3,8 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Charter AI App</title>
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Charter Agent · App</title>
+<link rel="icon" href="icon-48.png" type="image/png" sizes="48x48">
+<link rel="icon" href="icon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="icon-180.png">
 <meta name="theme-color" content="#0d0d0d">
 <meta name="description" content="Register and browse ERC-8004 AI agents on Robinhood Chain.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -288,7 +290,7 @@ footer{font-family:var(--JB);font-size:.72rem}
 <body>
 <div class="top">
   <div class="wrap">
-    <a class="brand" href="index.html" aria-label="Charter AI home">
+    <a class="brand" href="index.html" aria-label="Charter Agent home">
       <span>Charter</span></a>
     <nav class="tabs" aria-label="App">
       <a class="tab" href="#registry" data-tab="registry">Registry</a>
@@ -379,7 +381,7 @@ footer{font-family:var(--JB);font-size:.72rem}
           <div><span>Sends</span><b>1 transaction</b></div>
           <div><span>To</span><b><a href="https://robinhoodchain.blockscout.com/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener">0x8004…a432</a> ERC-8004 Identity Registry</b></div>
           <div><span>Calls</span><b><code>register(string agentURI)</code>, no approvals, no other contracts</b></div>
-          <div><span>Cost</span><b id="gasEst">Gas only, in ETH on Robinhood Chain. Charter AI charges nothing.</b></div>
+          <div><span>Cost</span><b id="gasEst">Gas only, in ETH on Robinhood Chain. Charter Agent charges nothing.</b></div>
         </div>
         <div class="status" id="formStatus" role="status"></div>
         <div class="actions">
@@ -427,7 +429,7 @@ footer{font-family:var(--JB);font-size:.72rem}
   <!-- HOW -->
   <section class="view" id="v-how" hidden>
     <div class="head"><div><div class="eyebrow">How it works</div><h1 style="margin-top:14px">One registry, readable by every app</h1>
-      <p class="lead">Charter AI is an interface to the public ERC-8004 Identity Registry on Robinhood Chain. It holds no funds and keeps no database.</p></div></div>
+      <p class="lead">Charter Agent is an interface to the public ERC-8004 Identity Registry on Robinhood Chain. It holds no funds and keeps no database.</p></div></div>
     <div class="how">
       <div><span class="eyebrow">Write</span><h3>You sign one transaction</h3><p>Your wallet calls <code>register(agentURI)</code> on the registry. The contract mints an ERC-721 token, and its ID becomes your agent ID.</p></div>
       <div><span class="eyebrow">Store</span><h3>The profile lives on chain</h3><p>Name, description, avatar and services are packed into a <code>data:application/json;base64</code> URI. No server or IPFS pin can go offline.</p></div>
@@ -437,7 +439,7 @@ footer{font-family:var(--JB);font-size:.72rem}
       <h2>Contract</h2>
       <p>Identity Registry on Robinhood Chain: <code>0x8004A169FB4a3325136EB29fA0ceB6D2e539a432</code> (<a href="https://robinhoodchain.blockscout.com/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener">Blockscout</a>). It is the same address the ERC-8004 team deployed on every supported chain. Source: <a href="https://github.com/erc-8004/erc-8004-contracts" target="_blank" rel="noopener">erc-8004-contracts</a>.</p>
       <h2>What it costs</h2>
-      <p>Charter AI charges nothing. You pay Robinhood Chain gas in ETH; your wallet shows the exact amount before you confirm. Larger avatars cost more gas, so uploads are resized to 160×160.</p>
+      <p>Charter Agent charges nothing. You pay Robinhood Chain gas in ETH; your wallet shows the exact amount before you confirm. Larger avatars cost more gas, so uploads are resized to 160×160.</p>
       <h2>Editing and ownership</h2>
       <p>The agent is an NFT owned by your wallet. The owner can update the profile with <code>setAgentURI</code> or transfer the agent to another wallet. Transfers clear the agent's verified payment wallet, as the standard requires.</p>
       <h2>Before you register</h2>
@@ -447,7 +449,7 @@ footer{font-family:var(--JB);font-size:.72rem}
 </main>
 
 <footer><div class="wrap">
-  <span>Charter AI · independent interface to the ERC-8004 Identity Registry on Robinhood Chain (ID 4663). Experimental software, use at your own risk.</span>
+  <span>Charter Agent · independent interface to the ERC-8004 Identity Registry on Robinhood Chain (ID 4663). Experimental software, use at your own risk.</span>
   <span><a href="https://eips.ethereum.org/EIPS/eip-8004" target="_blank" rel="noopener">ERC-8004</a> · <a href="https://robinhoodchain.blockscout.com/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener">Registry on Blockscout</a></span>
 </div></footer>
 
@@ -664,7 +666,7 @@ function initRegistry(){
     return loadPage().then(function(){writeCache(n,agents.slice(0,PAGE))})}).catch(function(){
     if(cached){agents=cached.agents;nextLow=null;renderLedger();$('regNotice').innerHTML='';$('regNotice').appendChild(h('div',{cls:'notice',text:'Robinhood Chain is not answering right now, so this is the last saved copy of the registry.'}));regInit=false;return}
     usingExamples=true;$('statCount').textContent='—';
-    $('regNotice').appendChild(h('div',{cls:'notice',text:'Live registry data could not load here, so the rows below are examples. On the deployed site Charter AI reads the registry directly from Robinhood Chain.'}));
+    $('regNotice').appendChild(h('div',{cls:'notice',text:'Live registry data could not load here, so the rows below are examples. On the deployed site Charter Agent reads the registry directly from Robinhood Chain.'}));
     renderLedger();regInit=false;
   });
 }
@@ -771,7 +773,7 @@ function preflight(data){var p=eth();
     p.request({method:'eth_estimateGas',params:[{from:account,to:REG,data:data}]}).catch(function(){return null}),
     p.request({method:'eth_gasPrice'}).catch(function(){return null})])
   .then(function(r){var bal=BigInt(r[0]||'0x0'),cost=r[1]&&r[2]?BigInt(r[1])*BigInt(r[2])*12n/10n:null;
-    if(cost!=null)$('gasEst').textContent='About '+fmtEth(cost)+' ETH of gas on Robinhood Chain (estimate). Charter AI charges nothing.';
+    if(cost!=null)$('gasEst').textContent='About '+fmtEth(cost)+' ETH of gas on Robinhood Chain (estimate). Charter Agent charges nothing.';
     if(bal===0n)throw new Error('Your wallet has 0 ETH on Robinhood Chain. Add a little ETH for gas'+(cost!=null?' (about '+fmtEth(cost)+' ETH)':'')+' and try again.');
     if(cost!=null&&bal<cost)throw new Error('Your wallet has '+fmtEth(bal)+' ETH on Robinhood Chain, and this registration needs about '+fmtEth(cost)+' ETH for gas. Add ETH and try again.');
   })}

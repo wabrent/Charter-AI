@@ -15,7 +15,7 @@ export default async function handler(req) {
   if (id != null) { try { agent = await readAgent(id); } catch (e) { agent = undefined; } }
 
   const target = id != null ? `/app.html#agent-${id}` : '/app.html#registry';
-  const title = agent ? `${agent.name} · Agent #${id} on Charter AI` : id != null ? `Agent #${id} · Charter AI` : 'Charter AI';
+  const title = agent ? `${agent.name} · Agent #${id} on Charter Agent` : id != null ? `Agent #${id} · Charter Agent` : 'Charter Agent';
   const desc = agent
     ? clip(agent.description || `ERC-8004 agent on Robinhood Chain, owned by ${agent.owner.slice(0, 6)}…${agent.owner.slice(-4)}.`, 200)
     : 'On-chain identity for AI agents on Robinhood Chain.';
@@ -27,7 +27,7 @@ export default async function handler(req) {
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
 <meta property="og:type" content="profile">
-<meta property="og:site_name" content="Charter AI">
+<meta property="og:site_name" content="Charter Agent">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${esc(origin + url.pathname)}">
@@ -37,7 +37,9 @@ export default async function handler(req) {
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
 <meta name="twitter:image" content="${esc(image)}">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/icon-48.png" type="image/png" sizes="48x48">
+<link rel="icon" href="/icon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/icon-180.png">
 <meta http-equiv="refresh" content="0;url=${esc(target)}">
 <style>body{background:#000;color:#fff;font:15px/1.5 ui-monospace,monospace;padding:40px}a{color:#fff}</style>
 </head><body>
