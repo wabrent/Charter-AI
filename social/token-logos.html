@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Token logo options</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=block">
+<style>
+/* Three token logo concepts, each drawn as a 512x512 square SVG (pons shows logos as squares/circles). */
+:root{--red:#c81b1c;--lab:#8f8f8f;--line:rgba(255,255,255,.14);--SG:'Space Grotesk',Arial,sans-serif;--JB:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1600px;height:900px;background:#0b0b0b;color:#fff;font-family:var(--JB);-webkit-font-smoothing:antialiased;overflow:hidden}
+.wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;padding:90px 80px 0}
+.opt{display:flex;flex-direction:column;align-items:center}
+.opt svg{width:420px;height:420px;display:block}
+.round{margin-top:26px;display:flex;align-items:center;gap:16px}
+.round svg{width:64px;height:64px;border-radius:50%;overflow:hidden}
+.round svg.sm{width:32px;height:32px}
+.nm{margin-top:28px;font:700 46px/1 var(--SG);letter-spacing:-.03em}
+.nm span{color:var(--red)}
+.ds{margin-top:12px;font:400 18px/1.4 var(--JB);color:var(--lab);text-align:center}
+.top{position:absolute;left:80px;top:34px;font:500 18px/1 var(--JB);letter-spacing:.2em;color:var(--lab)}
+</style>
+</head>
+<body>
+<div class="top">TOKEN LOGO OPTIONS · 512×512 · SHOWN SQUARE AND ROUND</div>
+<div class="wrap">
+  <!-- 1: KYA — Know Your Agent. Agent "eye" inside ID brackets -->
+  <div class="opt">
+    <svg id="kya" viewBox="0 0 512 512"><rect width="512" height="512" fill="#000"/>
+      <g fill="none" stroke="#fff" stroke-width="30" stroke-linecap="square">
+        <path d="M150 120H100V392H150"/><path d="M362 120H412V392H362"/></g>
+      <rect x="196" y="186" width="120" height="120" fill="#c81b1c"/>
+      <rect x="236" y="226" width="40" height="40" fill="#000"/>
+    </svg>
+    <div class="round"><svg viewBox="0 0 512 512"><use href="#kya"/></svg><svg class="sm" viewBox="0 0 512 512"><use href="#kya"/></svg></div>
+    <div class="nm">$<span>KYA</span></div>
+    <div class="ds">Know Your Agent.<br>Like KYC, but for AI agents.</div>
+  </div>
+  <!-- 2: WHOAMI — terminal prompt, dev-meme -->
+  <div class="opt">
+    <svg id="who" viewBox="0 0 512 512"><rect width="512" height="512" fill="#000"/>
+      <path d="M110 170L200 256L110 342" fill="none" stroke="#c81b1c" stroke-width="34" stroke-linecap="square"/>
+      <rect x="238" y="314" width="164" height="32" fill="#fff"/>
+      <text x="256" y="452" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="52" fill="#fff" letter-spacing="4">whoami</text>
+    </svg>
+    <div class="round"><svg viewBox="0 0 512 512"><use href="#who"/></svg><svg class="sm" viewBox="0 0 512 512"><use href="#who"/></svg></div>
+    <div class="nm">$<span>WHOAMI</span></div>
+    <div class="ds">The command every agent<br>should be able to answer.</div>
+  </div>
+  <!-- 3: SIGIL — a seal/mark: four arrows meeting in a red core -->
+  <div class="opt">
+    <svg id="sig" viewBox="0 0 512 512"><rect width="512" height="512" fill="#000"/>
+      <circle cx="256" cy="256" r="196" fill="none" stroke="#fff" stroke-width="18"/>
+      <g fill="none" stroke="#fff" stroke-width="22" stroke-linecap="square" transform="translate(256 256)">
+        <g><path d="M0-150V-46"/><path d="M-40-90L0-50L40-90"/></g>
+        <g transform="rotate(90)"><path d="M0-150V-46"/><path d="M-40-90L0-50L40-90"/></g>
+        <g transform="rotate(180)"><path d="M0-150V-46"/><path d="M-40-90L0-50L40-90"/></g>
+        <g transform="rotate(270)"><path d="M0-150V-46"/><path d="M-40-90L0-50L40-90"/></g></g>
+      <rect x="230" y="230" width="52" height="52" fill="#c81b1c"/>
+    </svg>
+    <div class="round"><svg viewBox="0 0 512 512"><use href="#sig"/></svg><svg class="sm" viewBox="0 0 512 512"><use href="#sig"/></svg></div>
+    <div class="nm">$<span>SIGIL</span></div>
+    <div class="ds">A seal of identity.<br>Keeps the Charter AI mark.</div>
+  </div>
+</div>
+<script>window.ready=document.fonts.ready.then(function(){return true});</script>
+</body>
+</html>

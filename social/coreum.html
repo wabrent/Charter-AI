@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Charter AI x Coreum card</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=block">
+<style>
+/* 1600x900 announcement card: Charter AI (identity) + Coreum (verification). Rendered to PNG with headless Chrome. */
+:root{--red:#c81b1c;--ok:#3fae63;--cyan:#5ec8d8;--sub:#d9d9d9;--lab:#8f8f8f;--line:rgba(255,255,255,.14);--line2:rgba(255,255,255,.26);
+  --SG:'Space Grotesk',Arial,sans-serif;--JB:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1600px;height:900px;background:#000;color:#fff;font-family:var(--JB);-webkit-font-smoothing:antialiased;overflow:hidden}
+.card{position:relative;width:1600px;height:900px;overflow:hidden}
+.glow{position:absolute;inset:0;background:radial-gradient(ellipse 30% 45% at 25% 62%,rgba(200,27,28,.24),transparent 70%),radial-gradient(ellipse 30% 45% at 75% 62%,rgba(94,200,216,.16),transparent 70%)}
+.grid{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;opacity:.2;
+  -webkit-mask-image:radial-gradient(ellipse 75% 70% at 50% 60%,#000,transparent 80%)}
+.top{position:absolute;left:80px;right:80px;top:64px;display:flex;align-items:center;justify-content:space-between}
+.eyebrow{font:400 20px/1 var(--JB);letter-spacing:.22em;color:var(--lab)}
+.tag{border:1px solid var(--line2);padding:12px 18px;font:500 17px/1 var(--JB);letter-spacing:.16em;color:var(--sub)}
+h1{position:absolute;left:80px;right:80px;top:130px;font:700 84px/1.02 var(--SG);letter-spacing:-.04em;text-align:center}
+h1 .x{color:var(--lab);font-weight:400;margin:0 26px}
+h1 .c{color:var(--red)}
+.sub{position:absolute;left:0;right:0;top:238px;text-align:center;font:400 25px/1.4 var(--JB);color:var(--sub)}
+.cols{position:absolute;left:80px;right:80px;top:330px;display:grid;grid-template-columns:1fr 150px 1fr;align-items:stretch}
+.box{border:1px solid var(--line2);background:rgba(6,6,6,.9);padding:30px 32px;display:flex;flex-direction:column}
+.box.l{border-color:rgba(200,27,28,.7)}.box.r{border-color:rgba(94,200,216,.6)}
+.box .k{font:500 17px/1 var(--JB);letter-spacing:.18em}
+.box.l .k{color:var(--red)}.box.r .k{color:var(--cyan)}
+.box h2{margin-top:16px;font:700 44px/1.05 var(--SG);letter-spacing:-.03em}
+.box p{margin-top:12px;font:400 20px/1.45 var(--JB);color:var(--sub)}
+.box ul{list-style:none;margin-top:22px;border-top:1px solid var(--line)}
+.box li{padding:12px 0;border-bottom:1px solid var(--line);font:400 18px/1.3 var(--JB);color:var(--sub);display:flex;gap:12px}
+.box li:last-child{border-bottom:0}
+.box li i{flex:none;margin-top:6px;width:8px;height:8px}
+.box.l li i{background:var(--red)}.box.r li i{background:var(--cyan)}
+.mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.mid svg{width:64px;height:54px}
+.mid span{font:500 15px/1.3 var(--JB);letter-spacing:.14em;color:var(--lab);text-align:center}
+.foot{position:absolute;left:80px;right:80px;bottom:44px;display:flex;justify-content:space-between;font:400 19px/1 var(--JB);color:var(--lab)}
+.foot b{color:#fff;font-weight:500}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="glow"></div><div class="grid"></div>
+  <div class="top"><div class="eyebrow">ROBINHOOD CHAIN · AI AGENTS</div><div class="tag">INTEGRATION ANNOUNCEMENT</div></div>
+  <h1><span class="c">Charter AI</span><span class="x">+</span>Coreum</h1>
+  <div class="sub">Who the agent is, and whether its answers hold up. Both on chain.</div>
+  <div class="cols">
+    <div class="box l">
+      <div class="k">IDENTITY</div>
+      <h2>Charter AI</h2>
+      <p>An ERC-8004 identity for every AI agent.</p>
+      <ul><li><i></i>Owner, profile and endpoints on chain</li><li><i></i>Registry of 9,200+ agents</li><li><i></i>Token: $CHARTER</li></ul>
+    </div>
+    <div class="mid">
+      <svg viewBox="0 0 64 54" fill="none" stroke-width="2.5"><path d="M4 18H58" stroke="#c81b1c"/><path d="M48 8L58 18L48 28" stroke="#c81b1c"/><path d="M60 36H6" stroke="#5ec8d8"/><path d="M16 26L6 36L16 46" stroke="#5ec8d8"/></svg>
+      <span>INTEGRATION<br>COMING</span>
+    </div>
+    <div class="box r">
+      <div class="k">VERIFICATION</div>
+      <h2>Coreum</h2>
+      <p>Independent AI cores, verdicts sealed on chain.</p>
+      <ul><li><i></i>Commit, reveal, majority verdict</li><li><i></i>Anchored to Robinhood Chain hourly</li><li><i></i>Token: $CORS</li></ul>
+    </div>
+  </div>
+  <div class="foot"><span><b>charterai.world</b></span><span>Every Coreum core gets an ERC-8004 identity</span><span><b>coreum.xyz</b></span></div>
+</div>
+<script>window.ready=document.fonts.ready.then(function(){return true});</script>
+</body>
+</html>

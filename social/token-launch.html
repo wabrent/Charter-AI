@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>$CHARTER launch card</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=block">
+<style>
+/* 1600x900 launch card for $CHARTER. Rendered to PNG with headless Chrome. */
+:root{--red:#c81b1c;--ok:#3fae63;--sub:#d9d9d9;--lab:#8f8f8f;--line:rgba(255,255,255,.14);--line2:rgba(255,255,255,.26);
+  --SG:'Space Grotesk',Arial,sans-serif;--JB:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1600px;height:900px;background:#000;color:#fff;font-family:var(--JB);-webkit-font-smoothing:antialiased;overflow:hidden}
+.card{position:relative;width:1600px;height:900px;overflow:hidden}
+.glow{position:absolute;inset:0;background:radial-gradient(ellipse 45% 60% at 80% 40%,rgba(200,27,28,.28),transparent 70%)}
+.grid{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;opacity:.22;
+  -webkit-mask-image:radial-gradient(ellipse 70% 70% at 70% 40%,#000,transparent 80%)}
+canvas{position:absolute;inset:0}
+.in{position:absolute;inset:0;padding:64px 80px;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:16px;font:700 34px/1 var(--SG);letter-spacing:-.03em}
+.brand svg{width:44px;height:44px}.brand i{font-style:normal;color:var(--red)}
+.live{display:flex;align-items:center;gap:12px;border:1px solid rgba(200,27,28,.7);background:rgba(200,27,28,.12);padding:12px 18px;font:500 18px/1 var(--JB);letter-spacing:.16em}
+.live i{width:10px;height:10px;background:var(--red);box-shadow:0 0 14px 3px rgba(200,27,28,.7)}
+.eyebrow{margin-top:70px;font:400 20px/1 var(--JB);letter-spacing:.22em;color:var(--lab)}
+h1{margin-top:20px;font:700 168px/.9 var(--SG);letter-spacing:-.05em}
+h1 span{color:var(--red)}
+.sub{margin-top:26px;font:400 26px/1.45 var(--JB);color:var(--sub);max-width:760px}
+.ca{margin-top:auto;display:flex;align-items:stretch;border:1px solid var(--line2);background:rgba(6,6,6,.92);align-self:flex-start}
+.ca .lb{display:flex;align-items:center;padding:0 22px;border-right:1px solid var(--line);font:500 18px/1 var(--JB);letter-spacing:.18em;color:var(--lab)}
+.ca code{padding:24px 26px;font:500 29px/1 var(--JB);color:#fff}
+.ca .ok{display:flex;align-items:center;gap:10px;padding:0 22px;border-left:1px solid var(--line);font:500 17px/1 var(--JB);letter-spacing:.12em;color:var(--ok)}
+.ca .ok i{width:9px;height:9px;background:var(--ok)}
+.side{position:absolute;right:80px;top:250px;width:480px;border:1px solid var(--line2);background:rgba(6,6,6,.9)}
+.side .hd{padding:18px 24px;border-bottom:1px solid var(--line);font:500 16px/1 var(--JB);letter-spacing:.18em;color:var(--lab)}
+.row{display:flex;gap:16px;align-items:flex-start;padding:20px 24px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .d{flex:none;margin-top:9px;width:9px;height:9px;background:var(--ok)}
+.row.next .d{background:var(--red)}
+.row b{display:block;font:500 25px/1.15 var(--SG)}
+.row span{display:block;margin-top:6px;font:400 17px/1.35 var(--JB);color:var(--lab)}
+.foot{position:absolute;right:80px;bottom:90px;text-align:right;font:400 19px/1.5 var(--JB);color:var(--lab)}
+.foot b{color:#fff;font-weight:500}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="glow"></div><div class="grid"></div><canvas id="net" width="1600" height="900"></canvas>
+  <div class="in">
+    <div class="top">
+      <div class="brand"><svg viewBox="0 0 46 46" fill="none" stroke="#fff" stroke-width="3">
+        <g><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g><g transform="rotate(90 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+        <g transform="rotate(180 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g><g transform="rotate(270 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g></svg>
+        <span>Charter<i>.</i>AI</span></div>
+      <div class="live"><i></i>LIVE ON PONS</div>
+    </div>
+    <div class="eyebrow">ROBINHOOD CHAIN · ERC-8004</div>
+    <h1>$<span>CHARTER</span></h1>
+    <div class="sub">The token behind the identity layer for AI agents on Robinhood Chain.</div>
+    <div class="ca"><span class="lb">OFFICIAL CA</span><code>0x1772cca13b617bad0f605555237b88c8ec3b17b9</code><span class="ok"><i></i>ONLY THIS ONE</span></div>
+  </div>
+  <div class="side">
+    <div class="hd">WHAT IT'S BEHIND</div>
+    <div class="row"><div class="d"></div><div><b>Live agent registry</b><span>9,200+ ERC-8004 agents, browsable</span></div></div>
+    <div class="row"><div class="d"></div><div><b>One-transaction registration</b><span>No code, profile fully on chain</span></div></div>
+    <div class="row"><div class="d"></div><div><b>Agent profile cards</b><span>Share any agent on X</span></div></div>
+    <div class="row next"><div class="d"></div><div><b>Next: holder perks</b><span>Verified badges, featured slots</span></div></div>
+  </div>
+  <div class="foot"><b>charterai.world</b></div>
+</div>
+<script>
+(function(){var c=document.getElementById('net').getContext('2d'),sd=5;function r(){sd=(sd*16807)%2147483647;return (sd-1)/2147483646}
+  var P=[],i,j,n=180,cx=1300,cy=150,R=360,ay=.9,ax=.4,ca=Math.cos(ay),sa=Math.sin(ay),cb=Math.cos(ax),sb=Math.sin(ax);
+  for(i=0;i<n;i++){var u=r()*2-1,v=r()*6.283,rr=i<140?1:.4+r()*.5,s=Math.sqrt(1-u*u),x=s*Math.cos(v)*rr,y=u*rr,z=s*Math.sin(v)*rr;
+    var X=x*ca-z*sa,Z=x*sa+z*ca,Y=y*cb-Z*sb;Z=y*sb+Z*cb;var k=2.6/(2.6+Z);P.push({x:cx+X*R*k,y:cy+Y*R*k,z:Z,k:k,hot:r()<.07,o:{x:x,y:y,z:z}})}
+  for(i=0;i<n;i++)for(j=i+1;j<n;j++){var a=P[i].o,b=P[j].o,d=(a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z);
+    if(d<.075){c.strokeStyle='rgba(255,255,255,'+(.03+.09*(1-(P[i].z+P[j].z+2)/4)).toFixed(3)+')';c.beginPath();c.moveTo(P[i].x,P[i].y);c.lineTo(P[j].x,P[j].y);c.stroke()}}
+  P.forEach(function(p){var s;if(p.hot){s=5*p.k;c.fillStyle='rgba(200,27,28,.9)'}else{s=2*p.k;c.fillStyle='rgba(255,255,255,'+(.1+.4*(1-(p.z+1)/2)).toFixed(3)+')'}c.fillRect(p.x-s/2,p.y-s/2,s,s)});
+})();
+window.ready=document.fonts.ready.then(function(){return true});
+</script>
+</body>
+</html>

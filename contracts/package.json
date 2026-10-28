@@ -1,0 +1,14 @@
+{
+  "name": "agent-validation-contracts",
+  "private": true,
+  "description": "Bonded validators for ERC-8004 agents: contracts and tests",
+  "scripts": {
+    "test": "hardhat test",
+    "compile": "hardhat compile"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "5.0.0",
+    "@openzeppelin/contracts": "5.1.0",
+    "hardhat": "2.28.0"
+  }
+}

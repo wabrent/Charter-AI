@@ -1,0 +1,15 @@
+{
+  "name": "charter-agent",
+  "private": true,
+  "description": "Lets an AI agent read and pay from its Charter spending-policy wallet: a CLI and an MCP server",
+  "type": "commonjs",
+  "bin": { "charter-agent": "charter-agent.js" },
+  "scripts": {
+    "mcp": "node mcp.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.12.1",
+    "ethers": "6.13.4",
+    "zod": "3.24.1"
+  }
+}

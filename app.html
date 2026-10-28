@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Charter AI App</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#0d0d0d">
 <meta name="description" content="Register and browse ERC-8004 AI agents on Robinhood Chain.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: black ledger. Left-aligned type, hairline rows, red only for actions and live state */
 :root{
@@ -51,9 +51,6 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .btn svg{width:18px;height:15px;flex:none;transition:transform .25s cubic-bezier(.22,1,.36,1)}
 .btn.ghost{background:transparent;border:1px solid var(--line2)}
 .btn.sm{height:38px;font-size:14.5px;padding:0 14px}
-.btn.trade{background:transparent;border:1px solid var(--red)}
-.ft-ca{word-break:break-all}
-@media (hover:hover){.btn.trade:hover{background:var(--red)}}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 @media (hover:hover){.btn:not([disabled]):hover{background:var(--red-d)}.btn:not([disabled]):hover svg{transform:translateX(3px)}
   .btn.ghost:not([disabled]):hover{background:rgba(255,255,255,.06)} .tab:hover{color:#fff}}
@@ -203,29 +200,104 @@ details pre{padding:14px 16px;border-top:1px solid var(--line);font:400 12px/1.5
 footer{border-top:1px solid var(--line);padding-block:28px 40px;font-size:12.5px;color:var(--lab)}
 footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 footer a{color:var(--sub)}
-@media (max-width:640px){.tabs .tab:nth-child(3){display:none}.net span{display:none}.top .wrap{gap:14px}.brand span{display:none}}
+@media (max-width:640px){.tabs .tab[data-tab="how"]{display:none}.net span{display:none}.top .wrap{gap:14px}.brand span{display:none}}
 @media (max-width:520px){.net{display:none}.top .wrap{gap:10px}.top .right{gap:8px}.tab{padding:8px 6px;font-size:13px}.btn.sm{padding:0 10px;font-size:13.5px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ================= editorial theme (matches index.html) =================
+   Overrides the original ledger styles: warm off-white on near-black, serif headings,
+   Inter for UI, mono for labels, pill buttons. Structure and behaviour are unchanged. */
+:root{
+  --bg:#0d0d0d; --panel:#111110; --line:rgba(236,233,226,.12); --line2:rgba(236,233,226,.24);
+  --ink:#ece9e2; --sub:#b9b5ad; --lab:#7f7b74; --dim:#4c4945;
+  --red:#ece9e2; --red-d:#ffffff; --ok:#9bc59d; --warn:#cdb37a;
+  --SERIF:'Instrument Serif','Times New Roman',serif;
+  --SG:'Inter','Helvetica Neue',Arial,sans-serif;
+}
+body{font-family:var(--SG);font-size:15px}
+.wrap{max-width:1320px}
+.top .wrap{height:5.5rem}
+.brand{font:400 1.55rem/1 var(--SERIF);letter-spacing:.32em;text-transform:uppercase}
+.tab{font:400 .95rem/1 var(--SG);color:var(--sub);border-bottom-width:1px}
+.tab[aria-current="page"]{color:var(--ink);border-bottom-color:var(--ink)}
+.net{font-family:var(--JB);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase}
+.btn{border-radius:999px;background:var(--ink);color:var(--bg);font:500 .95rem/1 var(--SG);letter-spacing:0;padding:0 1.4rem;height:3rem}
+.btn svg{stroke:currentColor}
+.btn svg path{stroke:currentColor}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line2)}
+.btn.sm{height:2.5rem;font-size:.88rem;padding:0 1.1rem}
+@media (hover:hover){.btn:not([disabled]):hover{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+  .btn.ghost:not([disabled]):hover{background:var(--ink);color:var(--bg)}}
+.eyebrow{font-size:.72rem;letter-spacing:.14em;color:var(--sub)}
+h1{font:400 clamp(2.8rem,1.6rem + 4vw,5rem)/.95 var(--SERIF);letter-spacing:-.015em}
+h2{font:400 2rem/1.05 var(--SERIF);letter-spacing:-.01em}
+h3{font:500 1rem/1.3 var(--SG);letter-spacing:0}
+.head .lead{font-size:1.05rem;line-height:1.65}
+.rhead-stats{border:0;gap:2rem}
+.rhead-stats div{border-top:1px solid var(--line);padding:.9rem 0 0;min-width:8rem}
+.rhead-stats div+div{border-left:0}
+.rhead-stats b{font:400 2.4rem/1 var(--SERIF)}
+.rhead-stats span{font:400 .68rem/1 var(--JB);letter-spacing:.14em;text-transform:uppercase}
+.search,.toggle{border-radius:999px;padding:0 1.2rem}
+.toggle input,.check input{accent-color:var(--ink)}
+.av,.avbig{border-radius:50%;background:transparent;font-family:var(--SERIF);font-weight:400;color:var(--ink)}
+.chip{border-radius:999px;padding:5px 9px;font-size:.62rem}
+.chip.red{border-color:var(--ink);color:var(--bg);background:var(--ink)}
+.chip.ok{border-color:var(--ok);color:var(--ok)}
+.steps{border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.step .n{border-radius:50%;font-family:var(--JB)}
+.step.cur .n{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.step.done .n{background:transparent;border-color:var(--ok);color:var(--ok)}
+.step b{font:400 1.35rem/1 var(--SERIF)}
+.f label,.f .lbl{font:500 .9rem/1 var(--SG)}
+.f input[type=text],.f input[type=url],.f textarea,.f select{border-radius:14px;background:#111110;font-family:var(--SG)}
+.f input:focus,.f textarea:focus,.f select:focus{border-color:var(--ink)}
+.svc .x{border-radius:14px}
+.card,.side,details,.txnote,.done{border-radius:18px;overflow:hidden}
+.card .ch h2,.done h2{font-family:var(--SERIF)}
+.done{border-color:var(--ok)}
+details summary{font:500 .9rem/1 var(--SG)}
+.how{border:0;border-top:1px solid var(--line)}
+.how>div{padding:2rem 2rem 1rem 0}
+.how>div+div{padding-left:2rem}
+.how h3{font:400 1.7rem/1.1 var(--SERIF)}
+.prose h2{font-size:2rem}
+.prose code,.copy{border-radius:6px}
+footer{font-family:var(--JB);font-size:.72rem}
+.ptable{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+.ptable th{font:400 .64rem/1 var(--JB);letter-spacing:.14em;text-transform:uppercase;color:var(--lab);text-align:left;padding:10px 0;border-bottom:1px solid var(--line)}
+.ptable td{padding:12px 0;border-bottom:1px solid var(--line);color:var(--sub)}
+.ptable td:first-child{color:var(--ink)}
+.ptable .blocked{color:var(--dim)}
+.polgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:28px;align-items:start}
+@media (max-width:900px){.polgrid{grid-template-columns:minmax(0,1fr)}}
+.polcard{border:1px solid var(--line2);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:16px;background:var(--panel)}
+.polctl{display:flex;flex-direction:column;gap:22px}
+.polctl .f{display:flex;flex-direction:column;gap:8px}
+.polctl .row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.polctl .acts{display:flex;gap:8px;flex-wrap:wrap}
+.pill-st{display:inline-flex;align-items:center;gap:6px}
+.pill-st::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.pill-st.off::before{background:var(--warn)}
+.verified{display:inline-flex;align-items:center;gap:6px}
+.verified::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
+@media (max-width:640px){.brand span{display:inline}.brand{font-size:1.1rem;letter-spacing:.2em}}
+@media (max-width:520px){.brand{font-size:.92rem;letter-spacing:.12em}.top .wrap{gap:8px}.tabs{gap:0}.tab{padding:8px 5px;font-size:12.5px}.btn.sm{padding:0 .8rem}}
 </style>
 </head>
 <body>
 <div class="top">
   <div class="wrap">
     <a class="brand" href="index.html" aria-label="Charter AI home">
-      <svg viewBox="0 0 46 46" fill="none" stroke="#fff" stroke-width="3.4" aria-hidden="true">
-        <g><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
-        <g transform="rotate(90 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
-        <g transform="rotate(180 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
-        <g transform="rotate(270 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
-      </svg><span>Charter<i>.</i>AI</span></a>
+      <span>Charter</span></a>
     <nav class="tabs" aria-label="App">
       <a class="tab" href="#registry" data-tab="registry">Registry</a>
       <a class="tab" href="#register" data-tab="register">Register</a>
+      <a class="tab" href="#policies" data-tab="policies">Policies</a>
       <a class="tab" href="#how" data-tab="how">How it works</a>
     </nav>
     <div class="right">
       <div class="net" id="net" title="Robinhood Chain"><b></b><span id="netTxt">Robinhood Chain</span></div>
-      <a class="btn sm trade" href="https://ponsfamily.com/launchpad/0x1772cca13b617bad0f605555237b88c8ec3b17b9" target="_blank" rel="noopener">Trade</a>
       <button class="btn sm" id="connectBtn" type="button">Connect wallet</button>
     </div>
   </div>
@@ -333,6 +405,25 @@ footer a{color:var(--sub)}
     <div id="agentBody"></div>
   </section>
 
+  <!-- POLICIES -->
+  <section class="view" id="v-policies" hidden>
+    <div class="head"><div>
+      <div class="eyebrow">Spending policies</div>
+      <h1 style="margin-top:14px">Limits your agent can't break</h1>
+      <p class="lead">A policy wallet lets an agent pay in ETH or tokens only within the limits its owner sets: per payment, per day and to listed addresses. The rules live in the contract, so they hold even if the agent's key leaks, and anyone can read them.</p>
+    </div></div>
+    <form class="tools" id="polForm" novalidate>
+      <input class="search" id="polId" type="text" inputmode="numeric" placeholder="Agent ID, for example 8843" aria-label="Agent ID">
+      <button class="btn" type="submit">Load policy<svg viewBox="0 0 21 18" fill="none" stroke="#fff" stroke-width="2"><path d="M0 9H20.1"/><path d="M12.1 1L20.1 9L12.1 17"/></svg></button>
+    </form>
+    <div id="polBody"></div>
+    <div class="how" style="margin-top:40px">
+      <div><span class="eyebrow">Owner</span><h3>Sets the rules</h3><p>Funds the wallet, sets limits and the allowlist, pauses it, rotates the agent key, and can always withdraw.</p></div>
+      <div><span class="eyebrow">Agent</span><h3>Pays within them</h3><p>Holds its own key and can only pay. No withdrawals, no approvals, no calls to other contracts.</p></div>
+      <div><span class="eyebrow">Anyone</span><h3>Reads them</h3><p>Limits, the allowlist and today's spending are public, so a counterparty can check them before it gets paid.</p></div>
+    </div>
+  </section>
+
   <!-- HOW -->
   <section class="view" id="v-how" hidden>
     <div class="head"><div><div class="eyebrow">How it works</div><h1 style="margin-top:14px">One registry, readable by every app</h1>
@@ -358,7 +449,6 @@ footer a{color:var(--sub)}
 <footer><div class="wrap">
   <span>Charter AI · independent interface to the ERC-8004 Identity Registry on Robinhood Chain (ID 4663). Experimental software, use at your own risk.</span>
   <span><a href="https://eips.ethereum.org/EIPS/eip-8004" target="_blank" rel="noopener">ERC-8004</a> · <a href="https://robinhoodchain.blockscout.com/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener">Registry on Blockscout</a></span>
-  <span class="ft-ca">$CHARTER CA <a href="https://robinhoodchain.blockscout.com/token/0x1772cca13b617bad0f605555237b88c8ec3b17b9" target="_blank" rel="noopener">0x1772cca13b617bad0f605555237b88c8ec3b17b9</a> · <a href="https://ponsfamily.com/launchpad/0x1772cca13b617bad0f605555237b88c8ec3b17b9" target="_blank" rel="noopener">Trade</a></span>
 </div></footer>
 
 <script>
@@ -488,11 +578,12 @@ function mintedId(rc){var l=(rc.logs||[]).find(function(x){return x.address&&x.a
 
 /* ================= routing ================= */
 function route(){var hs=(location.hash||'#registry').slice(1);var m=/^agent-(\d+)$/.exec(hs);if(m)return {v:'agent',id:parseInt(m[1],10)};
+  var pm=/^policies(?:-(\d+))?$/.exec(hs);if(pm)return {v:'policies',id:pm[1]?parseInt(pm[1],10):null};
   return {v:['registry','register','how'].indexOf(hs)>=0?hs:'registry'}}
-function show(){var r=route();['registry','register','agent','how'].forEach(function(v){$('v-'+v).hidden=v!==r.v});
+function show(){var r=route();['registry','register','agent','policies','how'].forEach(function(v){$('v-'+v).hidden=v!==r.v});
   document.querySelectorAll('.tab').forEach(function(t){if(t.dataset.tab===r.v)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current')});
   window.scrollTo(0,0);
-  if(r.v==='registry')initRegistry();if(r.v==='agent')renderAgent(r.id);if(r.v==='register')updatePreview()}
+  if(r.v==='registry')initRegistry();if(r.v==='agent')renderAgent(r.id);if(r.v==='register')updatePreview();if(r.v==='policies')renderPolicies(r.id)}
 addEventListener('hashchange',show);
 
 /* ================= registry ================= */
@@ -502,12 +593,44 @@ var EXAMPLES=[
   {id:null,owner:'0x7b2e000000000000000000000000000000009e04',meta:{name:'Ledgerline',description:'Reconciles wallet activity into a monthly statement with categories and cost basis.',services:[{name:'A2A'},{name:'email'}],x402Support:true}},
   {id:null,owner:'0xa04c00000000000000000000000000000000177b',meta:{name:'Quill Ops',description:'Drafts and schedules launch announcements across X and Telegram for new projects.',services:[{name:'web'}]}}
 ];
+/* ================= verified badges: bonded validators (docs/validators.md) =================
+   Off until AgentValidation is deployed on the chain the registry lives on: set VALIDATION.address.
+   On localhost only, ?validation=<address>&vrpc=<url> points the app at a local deployment, so a
+   shared link can never make the live site show a badge from some other contract. */
+var VALIDATION={address:null,rpc:RPCS[0]};
+var CLAIM_LIVE='0x454e44504f494e545f4c49564500000000000000000000000000000000000000'; // bytes32("ENDPOINT_LIVE")
+var VSEL={verifiedUntil:'0x21cf536b',latestCheck:'0x16f58927',checks:'0x618e7bd9'};
+if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)){var vq=new URLSearchParams(location.search);
+  if(/^0x[0-9a-fA-F]{40}$/.test(vq.get('validation')||''))VALIDATION={address:vq.get('validation'),rpc:/^https?:\/\//.test(vq.get('vrpc')||'')?vq.get('vrpc'):'http://127.0.0.1:8545'}}
+function vBatch(reqs){reqs.forEach(function(r,i){r.id=i+1});
+  return fetch(VALIDATION.rpc,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(reqs)}).then(function(r){return r.json()})
+    .then(function(res){var by={};(Array.isArray(res)?res:[res]).forEach(function(x){by[x.id]=x});return reqs.map(function(q){return by[q.id]||{}})})}
+function vCall(data){return {jsonrpc:'2.0',method:'eth_call',params:[{to:VALIDATION.address,data:data},'latest']}}
+/* Adds a.verifiedUntil (unix seconds, 0 if none) to each agent. Resolves without change when badges are off. */
+function markVerified(list){
+  if(!VALIDATION.address||!list.length)return Promise.resolve(list);
+  return vBatch(list.map(function(a){return vCall(VSEL.verifiedUntil+word(a.id)+CLAIM_LIVE.slice(2))}))
+    .then(function(res){list.forEach(function(a,i){a.verifiedUntil=res[i].result?parseInt(res[i].result,16):0});return list})
+    .catch(function(){return list});
+}
+/* Profile detail: until when, which check, which validator. Null when badges are off or the agent has none. */
+function verifiedInfo(id){
+  if(!VALIDATION.address)return Promise.resolve(null);
+  return vBatch([vCall(VSEL.verifiedUntil+word(id)+CLAIM_LIVE.slice(2)),vCall(VSEL.latestCheck+word(id)+CLAIM_LIVE.slice(2))]).then(function(r){
+    var until=r[0].result?parseInt(r[0].result,16):0,check=r[1].result?BigInt(r[1].result):0n;
+    if(until*1000<=Date.now()||!check)return null;
+    return vBatch([vCall(VSEL.checks+word(check))]).then(function(c){var w=(c[0].result||'').slice(2).match(/.{64}/g)||[];
+      return {until:until,check:check.toString(),validator:w[3]?'0x'+w[3].slice(24):null}})}).catch(function(){return null});
+}
+function isVerifiedNow(a){return !!(a&&a.verifiedUntil&&a.verifiedUntil*1000>Date.now())}
+
 function rowEl(a){
   var meta=a.meta||{},name=typeof meta.name==='string'&&meta.name.trim()?meta.name.trim():'Agent #'+a.id;
   var desc=typeof meta.description==='string'?meta.description:'';
   var chips=h('div',{cls:'chips'});
   if(a.example)chips.appendChild(h('span',{cls:'chip ex',text:'Example'}));
   svcNames(meta).slice(0,3).forEach(function(n){chips.appendChild(h('span',{cls:'chip',text:n}))});
+  if(isVerifiedNow(a))chips.appendChild(h('span',{cls:'chip ok verified',text:'Verified',title:'Endpoints checked live by a bonded validator'}));
   if(meta.x402Support===true)chips.appendChild(h('span',{cls:'chip red',text:'x402'}));
   if(!a.meta&&!a.example)chips.appendChild(h('span',{cls:'chip',text:a.uri?'Profile unreadable':'No profile',title:a.uri?'The profile is hosted on a server this site cannot read from the browser':''}));
   var el=h(a.example?'div':'a',a.example?{cls:'row'}:{cls:'row',href:'#agent-'+a.id},[
@@ -529,7 +652,7 @@ function renderLedger(){var L=$('ledger'),q=$('q').value.trim().toLowerCase();L.
 function loadPage(){
   if(nextLow==null||nextLow<0)return Promise.resolve();
   var ids=[];for(var i=nextLow;i>nextLow-PAGE&&i>=0;i--)ids.push(i);nextLow=nextLow-PAGE;
-  return fetchAgents(ids).then(function(list){agents=agents.concat(list);renderLedger()});
+  return fetchAgents(ids).then(markVerified).then(function(list){agents=agents.concat(list);renderLedger()});
 }
 function initRegistry(){
   if(regInit)return;regInit=true;var L=$('ledger');
@@ -582,6 +705,15 @@ function renderAgent(id){
       account&&a.owner&&account===a.owner.toLowerCase()&&!bound?h('div',{cls:'notice',text:'This profile is not bound to its agent ID. Register a new agent or edit the profile to add the registrations entry.'}):null]);
     B.appendChild(h('a',{href:'#registry',cls:'muted',style:'display:inline-block;margin-bottom:24px;text-decoration:none;font-size:13.5px',text:'← Registry'}));
     B.appendChild(h('div',{cls:'prof'},[left,side]));
+    loadPolicy(id).then(function(p){if(!p||route().v!=='agent'||route().id!==id)return;
+      side.appendChild(h('div',{cls:'eyebrow',text:'Spending policy'}));
+      side.appendChild(h('div',{style:'font-size:12.5px;color:var(--sub)'},[h('span',{cls:'pill-st'+(p.paused?' off':''),text:p.paused?'Paused':'Active'}),' · wallet ',h('span',{cls:'mono',text:short(p.account)}),' · allowlist '+(p.allowlist?'on':'off')]));
+      side.appendChild(policyRows(p));
+      side.appendChild(h('p',{cls:'hint',style:'color:var(--warn,#b45309)',text:BETA}));
+      side.appendChild(h('a',{cls:'btn ghost sm',href:'#policies-'+id,text:'View policy'}))});
+    verifiedInfo(id).then(function(v){if(!v||route().v!=='agent'||route().id!==id)return;
+      chips.insertBefore(h('span',{cls:'chip ok verified',text:'Verified',title:'Endpoints checked live by a bonded validator'}),chips.firstChild);
+      side.insertBefore(h('div',{cls:'notice ok'},['Verified: endpoints live. Checked by bonded validator ',h('span',{cls:'mono',text:short(v.validator)}),' in check #'+v.check+', valid until '+new Date(v.until*1000).toISOString().slice(0,10)+'.']),side.children[1])});
   }).catch(function(){B.innerHTML='';B.appendChild(h('div',{cls:'notice err',text:'Could not reach Robinhood Chain to load agent #'+id+'. Check your connection and reload.'}))});
 }
 
@@ -683,6 +815,125 @@ function showDone(id,hash,predicted){
   box.appendChild(h('div',{cls:'done',style:'margin-bottom:32px'},kids));
   $('regGrid').hidden=true;
 }
+
+/* ================= spending policies (docs/policies.md) =================
+   Reads AgentAccountFactory / AgentAccount. Off until POLICY.factory is set to a deployment on the same chain
+   as the registry. On localhost only, ?factory=<address>&vrpc=<url> points the page at a local deployment. */
+var POLICY={factory:null,rpc:RPCS[0],local:false};
+if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)){var pq=new URLSearchParams(location.search);
+  if(/^0x[0-9a-fA-F]{40}$/.test(pq.get('factory')||''))POLICY={factory:pq.get('factory'),rpc:/^https?:\/\//.test(pq.get('vrpc')||'')?pq.get('vrpc'):'http://127.0.0.1:8545',local:true}}
+var PSEL={currentAccount:'0x4f03540b',create:'0xf01fe692',identity:'0x2c159a1a',ownerOf:'0x6352211e',owner:'0x8da5cb5b',agent:'0xf5ff5c76',paused:'0x5c975abb',
+  allowlistEnabled:'0x94c8e4ff',allowedCount:'0x89d34e4b',limits:'0x20d7bec1',spentToday:'0x8aeac501',setLimits:'0xfa2746b4',setAllowed:'0x4697f05d',
+  setAllowlistEnabled:'0xd7644ba2',setPaused:'0x16c38b3c',setAgent:'0xbcf685ed',decimals:'0x313ce567',symbol:'0x95d89b41'};
+var T_LIMITS='0xcdd7e2af1efd2e786556be5d1cb7b563280e0a60a6fbd411ac1cc2882a2bd68f';
+var ZERO='0x0000000000000000000000000000000000000000';
+function aw(a){return a.slice(2).toLowerCase().padStart(64,'0')}
+function pBatch(reqs){reqs.forEach(function(r,i){r.jsonrpc='2.0';r.id=i+1});
+  return fetch(POLICY.rpc,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(reqs)}).then(function(r){return r.json()})
+    .then(function(res){var by={};(Array.isArray(res)?res:[res]).forEach(function(x){by[x.id]=x});return reqs.map(function(q){return (by[q.id]||{}).result})})}
+function pc(to,data){return {method:'eth_call',params:[{to:to,data:data},'latest']}}
+function asAddr(r){return r&&r.length>=66?'0x'+r.slice(-40).toLowerCase():ZERO}
+function asBig(r){return r&&r!=='0x'?BigInt(r):0n}
+function fmtUnits(v,dec){var neg=v<0n;if(neg)v=-v;var b=10n**BigInt(dec),i=v/b,f=(v%b).toString().padStart(dec,'0').slice(0,4).replace(/0+$/,'');return (neg?'-':'')+i.toLocaleString('en-US')+(f?'.'+f:'')}
+function parseUnits(str,dec){str=String(str).trim();if(!/^\d+(\.\d+)?$/.test(str))throw new Error('Enter an amount like 50 or 0.25.');var p=str.split('.');var f=(p[1]||'');if(f.length>dec)throw new Error('Too many decimals for this asset.');return BigInt(p[0])*10n**BigInt(dec)+BigInt((f+'0'.repeat(dec)).slice(0,dec)||'0')}
+
+/* Everything a profile or the policies page shows about one agent's wallet. Null when there is none. */
+function loadPolicy(agentId){
+  if(!POLICY.factory)return Promise.resolve(null);
+  return pBatch([pc(POLICY.factory,PSEL.currentAccount+word(agentId))]).then(function(r){var acc=asAddr(r[0]);if(acc===ZERO)return null;
+    return Promise.all([
+      pBatch([pc(acc,PSEL.owner),pc(acc,PSEL.agent),pc(acc,PSEL.paused),pc(acc,PSEL.allowlistEnabled),pc(acc,PSEL.allowedCount)]),
+      pBatch([{method:'eth_getLogs',params:[{address:acc,fromBlock:'0x0',toBlock:'latest',topics:[T_LIMITS]}]}]).then(function(l){return l[0]||[]}).catch(function(){return []})
+    ]).then(function(x){var b=x[0],seen={},assets=[ZERO];seen[ZERO]=1;
+      x[1].forEach(function(lg){var a=asAddr(lg.topics[1]);if(!seen[a]){seen[a]=1;assets.push(a)}});
+      var reqs=[];assets.forEach(function(a){reqs.push(pc(acc,PSEL.limits+aw(a)),pc(acc,PSEL.spentToday+aw(a)));if(a!==ZERO)reqs.push(pc(a,PSEL.symbol),pc(a,PSEL.decimals))});
+      return pBatch(reqs).then(function(v){var k=0;var list=assets.map(function(a){var lim=(v[k++]||'').slice(2),spent=asBig(v[k++]),sym='ETH',dec=18;
+          if(a!==ZERO){sym=v[k]?decString(v[k])||short(a):short(a);k++;dec=v[k]?Number(BigInt(v[k])):18;k++}
+          return {asset:a,symbol:sym,decimals:dec,perPayment:lim.length>=128?BigInt('0x'+lim.slice(0,64)):0n,perDay:lim.length>=128?BigInt('0x'+lim.slice(64,128)):0n,spent:spent}});
+        return {account:acc,owner:asAddr(b[0]),agent:asAddr(b[1]),paused:asBig(b[2])!==0n,allowlist:asBig(b[3])!==0n,allowedCount:Number(asBig(b[4])),assets:list}})})}).catch(function(){return null});
+}
+function policyRows(p){return h('table',{cls:'ptable'},[h('thead',null,[h('tr',null,[h('th',{text:'Asset'}),h('th',{text:'Per payment'}),h('th',{text:'Per day'}),h('th',{text:'Spent today'})])]),
+  h('tbody',null,p.assets.map(function(a){var off=a.perDay===0n;return h('tr',null,[h('td',{text:a.symbol}),
+    h('td',{cls:off?'blocked':'',text:off?'blocked':fmtUnits(a.perPayment,a.decimals)}),h('td',{cls:off?'blocked':'',text:off?'—':fmtUnits(a.perDay,a.decimals)}),h('td',{text:fmtUnits(a.spent,a.decimals)})])}))])}
+
+/* Sends one call from the connected wallet and waits for it. On a local deployment it skips the chain switch. */
+function polTx(to,data,st){st.className='status';st.textContent='Confirm in your wallet…';
+  return connect().then(function(){return POLICY.local?null:ensureChain()})
+    .then(function(){return eth().request({method:'eth_sendTransaction',params:[{from:account,to:to,data:data}]})})
+    .then(function(hash){st.textContent='Waiting for confirmation…';return waitReceipt(hash)})
+    .then(function(rc){if(rc.status&&parseInt(rc.status,16)!==1)throw new Error('The transaction failed. Nothing changed.');st.className='status ok';st.textContent='Saved.'})
+    .catch(function(e){st.className='status err';st.textContent=e&&(e.code===4001||/reject|denied|cancel/i.test(e.message||''))?'You cancelled the request in your wallet.':(e&&e.message)||'Something went wrong.';throw e})}
+
+var polSeq=0;
+var BETA='Unaudited beta. Keep only small amounts in a policy wallet.';
+function renderPolicies(id){
+  if(id!=null)$('polId').value=String(id);
+  var B=$('polBody');B.innerHTML='';
+  if(!POLICY.factory){B.appendChild(h('div',{cls:'notice'},['Policy wallets are not live on Robinhood Chain yet. The contracts and tests are ready; the design is in ',h('span',{cls:'mono',text:'docs/policies.md'}),'.']));return}
+  if(id==null)return;
+  var seq=++polSeq;B.appendChild(h('div',{cls:'skel'}));
+  loadPolicy(id).then(function(p){if(seq!==polSeq)return;B.innerHTML='';
+    if(!p)return renderNoPolicy(B,id);
+    var isOwner=account&&account===p.owner;
+    var card=h('div',{cls:'polcard'},[
+      h('div',{style:'display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline'},[h('h2',{text:'Agent #'+id+' policy'}),h('span',{cls:'pill-st'+(p.paused?' off':''),text:p.paused?'Paused':'Active'})]),
+      h('dl',{cls:'kv'},[h('dt',{text:'Wallet'}),h('dd',{cls:'mono',text:p.account}),h('dt',{text:'Owner'}),h('dd',{cls:'mono',text:p.owner}),h('dt',{text:'Agent key'}),h('dd',{cls:'mono',text:p.agent}),
+        h('dt',{text:'Allowlist'}),h('dd',{text:p.allowlist?'On · '+p.allowedCount+' address'+(p.allowedCount===1?'':'es'):'Off · any address'})]),
+      policyRows(p),
+      h('p',{cls:'hint',text:'Assets with no limits are blocked for the agent. Days reset at 00:00 UTC.'}),h('p',{cls:'hint',style:'color:var(--warn,#b45309)',text:BETA})]);
+    var grid=h('div',{cls:'polgrid'},[card]);
+    if(isOwner)grid.appendChild(ownerControls(id,p));
+    else grid.appendChild(h('div',{cls:'notice',text:account?'Connected wallet is not this policy\'s owner, so the controls are hidden.':'Connect the owner wallet to change these rules.'}));
+    B.appendChild(grid);
+  });
+}
+function renderNoPolicy(B,id){
+  B.appendChild(h('div',{cls:'notice',text:'Agent #'+id+' has no policy wallet yet. '+BETA}));
+  pBatch([pc(POLICY.factory,PSEL.identity)]).then(function(r){var idReg=asAddr(r[0]);return pBatch([pc(idReg,PSEL.ownerOf+word(id))])}).then(function(r){
+    var owner=asAddr(r[0]);if(owner===ZERO)return;
+    if(!account||account!==owner){B.appendChild(h('p',{cls:'hint',text:'Only the agent\'s owner can create one. Connect '+short(owner)+' to start.'}));return}
+    var key=h('input',{type:'text',placeholder:'Agent key address, 0x…','aria-label':'Agent key'}),st=h('div',{cls:'status'}),btn=h('button',{cls:'btn',type:'button',text:'Create policy wallet'});
+    btn.addEventListener('click',function(){var k=key.value.trim();if(!/^0x[0-9a-fA-F]{40}$/.test(k)){st.className='status err';st.textContent='Enter the address of the key your agent signs with.';return}
+      btn.disabled=true;polTx(POLICY.factory,PSEL.create+word(id)+aw(k),st).then(function(){renderPolicies(id)}).finally(function(){btn.disabled=false})});
+    B.appendChild(h('div',{cls:'polcard f',style:'max-width:560px'},[h('h2',{text:'Create a policy wallet'}),h('p',{cls:'hint',text:'The new wallet is owned by your wallet and starts with every asset blocked. The agent key is the only key that can pay from it.'}),key,h('div',{cls:'acts',style:'display:flex;gap:8px'},[btn]),st]));
+  }).catch(function(){});
+}
+function ownerControls(id,p){
+  var st=h('div',{cls:'status'}),wrap=h('div',{cls:'polcard polctl'},[h('h2',{text:'Owner controls'})]);
+  function go(data,btn){btn.disabled=true;polTx(p.account,data,st).then(function(){renderPolicies(id)}).catch(function(){}).finally(function(){btn.disabled=false})}
+  // limits
+  var sel=h('select',{'aria-label':'Asset'});p.assets.forEach(function(a){sel.appendChild(h('option',{value:a.asset,text:a.symbol}))});sel.appendChild(h('option',{value:'other',text:'Other token…'}));
+  var tok=h('input',{type:'text',placeholder:'Token address, 0x…','aria-label':'Token address'});tok.hidden=true;sel.addEventListener('change',function(){tok.hidden=sel.value!=='other'});
+  var per=h('input',{type:'text',inputmode:'decimal',placeholder:'Per payment'}),day=h('input',{type:'text',inputmode:'decimal',placeholder:'Per day'});
+  var bL=h('button',{cls:'btn sm',type:'button',text:'Save limits'});
+  bL.addEventListener('click',function(){try{var a=sel.value==='other'?tok.value.trim():sel.value;if(!/^0x[0-9a-fA-F]{40}$/.test(a))throw new Error('Enter a token address.');
+      var known=p.assets.find(function(x){return x.asset===a.toLowerCase()});
+      // a token the wallet has never limited: ask it for its decimals first, so 50 means 50 tokens
+      var decP=known?Promise.resolve(known.decimals):pBatch([pc(a,PSEL.decimals)]).then(function(r){if(!r[0]||r[0]==='0x')throw new Error('That address does not answer decimals(); is it an ERC-20 token?');return Number(BigInt(r[0]))});
+      decP.then(function(dec){var ap=parseUnits(per.value||'0',dec),ad=parseUnits(day.value||'0',dec);if(ap>ad)throw new Error('The per-payment limit cannot be above the daily limit.');
+        go(PSEL.setLimits+aw(a)+word(ap)+word(ad),bL)}).catch(function(e){st.className='status err';st.textContent=e.message})}catch(e){st.className='status err';st.textContent=e.message}});
+  wrap.appendChild(h('div',{cls:'f'},[h('div',{cls:'lbl'},['Limits',h('small',{text:'0 and 0 blocks the asset'})]),sel,tok,h('div',{cls:'row2'},[per,day]),h('div',{cls:'acts'},[bL])]));
+  // allowlist
+  var ad2=h('input',{type:'text',placeholder:'Address, 0x…','aria-label':'Allowlist address'});
+  var bAdd=h('button',{cls:'btn sm ghost',type:'button',text:'Allow'}),bRem=h('button',{cls:'btn sm ghost',type:'button',text:'Remove'});
+  var bTog=h('button',{cls:'btn sm',type:'button',text:p.allowlist?'Turn allowlist off':'Turn allowlist on'});
+  function addr(){var v=ad2.value.trim();if(!/^0x[0-9a-fA-F]{40}$/.test(v)){st.className='status err';st.textContent='Enter an address.';return null}return v}
+  bAdd.addEventListener('click',function(){var v=addr();if(v)go(PSEL.setAllowed+aw(v)+word(1),bAdd)});
+  bRem.addEventListener('click',function(){var v=addr();if(v)go(PSEL.setAllowed+aw(v)+word(0),bRem)});
+  bTog.addEventListener('click',function(){go(PSEL.setAllowlistEnabled+word(p.allowlist?0:1),bTog)});
+  wrap.appendChild(h('div',{cls:'f'},[h('div',{cls:'lbl'},['Allowlist',h('small',{text:p.allowlist?'on':'off'})]),ad2,h('div',{cls:'acts'},[bAdd,bRem,bTog])]));
+  // agent key + pause
+  var key=h('input',{type:'text',placeholder:'New agent key, 0x…','aria-label':'New agent key'}),bKey=h('button',{cls:'btn sm ghost',type:'button',text:'Rotate key'});
+  bKey.addEventListener('click',function(){var v=key.value.trim();if(!/^0x[0-9a-fA-F]{40}$/.test(v)){st.className='status err';st.textContent='Enter the new key address.';return}go(PSEL.setAgent+aw(v),bKey)});
+  var bP=h('button',{cls:'btn sm'+(p.paused?'':' ghost'),type:'button',text:p.paused?'Unpause agent':'Pause agent'});
+  bP.addEventListener('click',function(){go(PSEL.setPaused+word(p.paused?0:1),bP)});
+  wrap.appendChild(h('div',{cls:'f'},[h('div',{cls:'lbl'},['Agent key',h('small',{text:'rotate after a leak'})]),key,h('div',{cls:'acts'},[bKey,bP])]));
+  wrap.appendChild(st);
+  return wrap;
+}
+$('polForm').addEventListener('submit',function(e){e.preventDefault();var v=$('polId').value.trim();if(!/^\d+$/.test(v))return;
+  if(location.hash==='#policies-'+v)renderPolicies(parseInt(v,10));else location.hash='#policies-'+v});
+if(eth()&&eth().on)eth().on('accountsChanged',function(){if(route().v==='policies')renderPolicies(route().id)});
 
 /* boot */
 agentCount(storedCount()).then(function(n){try{localStorage.setItem('charter.count',String(n))}catch(e){}if(route().v==='register')updatePreview()}).catch(function(){});

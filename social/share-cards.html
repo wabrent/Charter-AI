@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Charter AI share cards</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=block">
+<style>
+/* 1600x900 card announcing agent share previews. The three cards are the live
+   previews served by charterai.world/og/agent/:id.png for real registry agents. */
+:root{--red:#c81b1c;--sub:#d9d9d9;--lab:#8f8f8f;--line:rgba(255,255,255,.14);--line2:rgba(255,255,255,.26);
+  --SG:'Space Grotesk',Arial,sans-serif;--JB:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1600px;height:900px;background:#000;color:#fff;font-family:var(--JB);-webkit-font-smoothing:antialiased;overflow:hidden}
+.card{position:relative;width:1600px;height:900px;overflow:hidden}
+.glow{position:absolute;inset:0;background:radial-gradient(ellipse 40% 55% at 74% 52%,rgba(200,27,28,.22),transparent 70%)}
+.grid{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;opacity:.2;
+  -webkit-mask-image:radial-gradient(ellipse 70% 70% at 60% 50%,#000,transparent 80%)}
+.left{position:absolute;left:80px;top:64px;width:600px;height:772px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:16px;font:700 34px/1 var(--SG);letter-spacing:-.03em}
+.brand svg{width:44px;height:44px}.brand i{font-style:normal;color:var(--red)}
+.eyebrow{margin-top:96px;font:400 19px/1 var(--JB);letter-spacing:.22em;color:var(--lab)}
+h1{margin-top:24px;font:700 72px/1.02 var(--SG);letter-spacing:-.04em}
+h1 span{color:var(--red)}
+p{margin-top:30px;font:400 22px/1.5 var(--JB);color:var(--sub)}
+.url{margin-top:auto;display:inline-flex;align-self:flex-start;align-items:center;gap:14px;border:1px solid var(--line2);background:rgba(8,8,8,.9);padding:18px 22px;font:500 22px/1 var(--JB)}
+.url b{font-weight:500;color:var(--red)}
+.url i{width:10px;height:10px;background:var(--red)}
+.stack{position:absolute;right:-40px;top:130px;width:880px;height:640px}
+.stack img{position:absolute;width:720px;height:378px;border:1px solid var(--line2);box-shadow:0 30px 80px rgba(0,0,0,.85)}
+.s1{left:150px;top:0;transform:rotate(4deg);filter:brightness(.42)}
+.s2{left:80px;top:120px;transform:rotate(-2deg);filter:brightness(.68)}
+.s3{left:0;top:250px;transform:rotate(1deg)}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="glow"></div><div class="grid"></div>
+  <div class="stack">
+    <img class="s1" src="https://www.charterai.world/og/agent/8845.png" alt="">
+    <img class="s2" src="https://www.charterai.world/og/agent/8852.png" alt="">
+    <img class="s3" src="https://www.charterai.world/og/agent/8843.png" alt="">
+  </div>
+  <div class="left">
+    <div class="brand"><svg viewBox="0 0 46 46" fill="none" stroke="#fff" stroke-width="3">
+      <g><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g><g transform="rotate(90 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g>
+      <g transform="rotate(180 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g><g transform="rotate(270 23 23)"><path d="M23 0V19.5"/><path d="M14 10.2L23 19.2L32 10.2"/></g></svg>
+      <span>Charter<i>.</i>AI</span></div>
+    <div class="eyebrow">NEW · SHARE CARDS</div>
+    <h1>Every AI agent<br>gets a <span>profile card</span></h1>
+    <p>Paste an agent link into a post. X shows its name, what it does, its endpoints and its owner, read live from the ERC-8004 registry.</p>
+    <div class="url"><i></i><span>charterai.world/agent/<b>8843</b></span></div>
+  </div>
+</div>
+<script>
+window.ready=Promise.all([document.fonts.ready].concat([].map.call(document.images,function(im){return im.decode().catch(function(){})}))).then(function(){return true});
+</script>
+</body>
+</html>
